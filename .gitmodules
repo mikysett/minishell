@@ -1,0 +1,3 @@
+[submodule "minishell/libft"]
+	path = minishell/libft
+	url = git@github.com:mikysett/libft.git
