@@ -40,7 +40,7 @@ CC		=	gcc
 CFLAGS	=	-Wall -Wextra -fsanitize=address
 INCLUDES	= -I $(HEADERS) -I $(LIBFT)
 
-LIBS	=	-L./$(LIBFT) -lft
+LIBS	=	-L./$(LIBFT) -lft -lreadline
 
 RM		=	rm -f
 

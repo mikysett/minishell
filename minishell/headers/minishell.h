@@ -18,6 +18,9 @@
 # include <curses.h>
 # include <term.h>
 
+# include <readline/readline.h>
+# include <readline/history.h>
+
 # include "libft.h"
 # include "types.h"
 
