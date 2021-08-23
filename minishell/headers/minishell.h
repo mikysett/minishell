@@ -17,11 +17,16 @@
 # include <termios.h>
 # include <curses.h>
 # include <term.h>
+# include <stddef.h>
+# include <sys/errno.h>
+# include <string.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
 
 # include "libft.h"
 # include "types.h"
+# include "core.h"
+# include "parser.h"
 
 #endif

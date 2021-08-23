@@ -4,10 +4,18 @@
 typedef enum e_token_type
 {
 	word,
+	operator,
+
+	// TODO next 3 token types are not necessary but I kept them as a good reference
 	control_operator,		/* newline, ‘||’, ‘&&’, ‘&’, ‘;’, ‘;;’, ‘;&’, ‘;;&’, ‘|’, ‘|&’, ‘(’, or ‘)’ */
 	redirection_operator,	/* '<', '>', '<<', '>>',  */
 	metacharacter			/* space, tab, newline, ‘|’, ‘&’, ‘;’, ‘(’, ‘)’, ‘<’, or ‘>’ */
 }				t_token_type;
+
+typedef enum e_err_code
+{
+	MEMORY_FAIL
+}				t_err_code;
 
 typedef struct s_token
 {

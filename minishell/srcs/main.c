@@ -2,7 +2,8 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*line;
+	char		*line;
+	t_minishell	minishell;
 
 	while (1)
 	{
@@ -10,6 +11,7 @@ int	main(int argc, char **argv, char **envp)
 		if (line && *line)
 		{
 			add_history(line);
+			minishell = parser(line);
 			printf("line result: %s\n", line);
 		}
 		if (line)
