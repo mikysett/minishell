@@ -3,8 +3,9 @@
 
 // CORE_UTIL
 
-void	ft_error_exit(t_err_code err);
-void	ft_print_err(t_err_code err);
+t_minishell	*get_minishell(t_minishell *minishell);
+void		ft_error_exit(t_err_code err);
+void		ft_print_err(t_err_code err);
 
 // MEMORY_UTIL
 

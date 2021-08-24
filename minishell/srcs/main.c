@@ -3,7 +3,7 @@
 int	main(int argc, char **argv, char **envp)
 {
 	char		*line;
-	t_minishell	minishell;
+	t_minishell	*minishell;
 
 	while (1)
 	{

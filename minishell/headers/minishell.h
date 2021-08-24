@@ -25,6 +25,10 @@
 # include <readline/history.h>
 
 # include "libft.h"
+
+# include "debug.h"
+
+# include "libft.h"
 # include "types.h"
 # include "core.h"
 # include "parser.h"
