@@ -1,6 +1,12 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# ifdef DEBUG_MODE
+#  define DEBUG(x) x
+# else
+#  define DEBUG(x)
+# endif
+
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>

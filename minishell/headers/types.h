@@ -1,6 +1,16 @@
 #ifndef TYPES_H
 # define TYPES_H
 
+# define CLR_WHITE	"\033[0;37m"
+# define CLR_BLACK	"\033[0;30m"
+# define CLR_GRAY	"\033[30;1m"
+# define CLR_RED	"\033[0;31m"
+# define CLR_GREEN	"\033[0;32m"
+# define CLR_YELLOW	"\033[0;33m"
+# define CLR_BLUE	"\033[0;34m"
+# define CLR_PURPLE	"\033[0;35m"
+# define CLR_CYAN	"\033[0;36m"
+
 typedef enum e_token_type
 {
 	word,
@@ -24,6 +34,13 @@ typedef enum e_err_code
 	MEMORY_FAIL,
 	WRONG_QUOTING
 }				t_err_code;
+
+typedef enum e_prog_state
+{
+	TAKE_STATE,
+	PROG_OK,
+	PARSER_ERROR
+}				t_prog_state;
 
 typedef struct s_token
 {

@@ -1,13 +1,11 @@
 #include "minishell.h"
 
-t_list	**lexer(char *line)
+t_list	**lexer(char *line, t_list **tokens)
 {
 	char	*token_start;
 	char	*token_end;
-	t_list	**tokens;
 	t_token	*curr_token;
 
-	tokens = calloc_or_exit(1, sizeof(t_list *));
 	token_start = next_non_space(line);
 	while (*token_start)
 	{
@@ -100,7 +98,10 @@ char	*get_token_word_end(char *str, t_quote_type quote_type)
 			&& *str != '"')
 			str++;
 	if (!*str && quote_type != NO_QUOTING)
-		ft_error_exit(WRONG_QUOTING);
+	{
+		print_err(WRONG_QUOTING);
+		prog_state(PARSER_ERROR);
+	}
 	return (str);
 }
 

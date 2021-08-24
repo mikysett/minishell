@@ -76,4 +76,8 @@ fclean:		miniclean
 
 re:			fclean all
 
-.PHONY:		all bonus miniclean clean fclean re
+debug:		INCLUDES += -DDEBUG_MODE
+debug:		miniclean
+debug:		all
+
+.PHONY:		all bonus miniclean clean fclean re debug

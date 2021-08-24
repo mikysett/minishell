@@ -9,14 +9,27 @@ t_minishell	*get_minishell(t_minishell *minishell)
 	return (ms);
 }
 
+t_prog_state	prog_state(t_prog_state set_prog_state)
+{
+	static t_prog_state	prog_state = PROG_OK;
+
+	if (set_prog_state != TAKE_STATE)
+		prog_state = set_prog_state;
+	return (prog_state);
+}
+
 void	ft_error_exit(t_err_code err)
 {
-	ft_print_err(err);
-	// TODO free memory
+	t_minishell	*ms;
+
+	ms = get_minishell(NULL);
+	print_err(err);
+	if (ms)
+		free_minishell(ms);
 	exit(EXIT_FAILURE);
 }
 
-void	ft_print_err(t_err_code err)
+void	print_err(t_err_code err)
 {
 	// TODO check if err_code is still necessary or if strerror(errno) is enough
 	if (err == MEMORY_FAIL)

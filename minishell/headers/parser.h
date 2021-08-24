@@ -1,10 +1,10 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-t_minishell		*parser(char *line);
+t_minishell		*parser(char *line, t_minishell *minishell);
 
 // LEXER
-t_list			**lexer(char *line);
+t_list			**lexer(char *line, t_list **tokens);
 char			*next_non_space(char *str);
 t_token			*init_token(char *token_start);
 t_quote_type	get_quote_type(char token_start);
