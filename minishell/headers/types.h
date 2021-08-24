@@ -12,15 +12,24 @@ typedef enum e_token_type
 	metacharacter			/* space, tab, newline, ‘|’, ‘&’, ‘;’, ‘(’, ‘)’, ‘<’, or ‘>’ */
 }				t_token_type;
 
+typedef enum e_quote_type
+{
+	NO_QUOTING,
+	SINGLE_QUOTES,
+	DOUBLE_QUOTES
+}				t_quote_type;
+
 typedef enum e_err_code
 {
-	MEMORY_FAIL
+	MEMORY_FAIL,
+	WRONG_QUOTING
 }				t_err_code;
 
 typedef struct s_token
 {
 	t_token_type	type;
-	char			str;
+	t_quote_type	quote_type;
+	char			*str;
 }				t_token;
 
 typedef struct s_cmd
