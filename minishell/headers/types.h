@@ -13,8 +13,8 @@
 
 typedef enum e_token_type
 {
-	word,
-	operator,
+	WORD,
+	OPERATOR,
 
 	// TODO next 3 token types are not necessary but I kept them as a good reference
 	control_operator,		/* newline, ‘||’, ‘&&’, ‘&’, ‘;’, ‘;;’, ‘;&’, ‘;;&’, ‘|’, ‘|&’, ‘(’, or ‘)’ */
@@ -51,15 +51,49 @@ typedef struct s_token
 
 typedef struct s_cmd
 {
+	int		id;
+	int		group;
 	char	*name;
 	char	**args;
-	char	*in;
-	char	*out;
+	bool	is_first_in_group;
+	bool	is_last_in_group;
+	bool	is_builtin;
 }				t_cmd;
+
+typedef enum e_redir_type
+{
+	REDIR_PIPE,
+	REDIR_IN,
+	REDIR_HERE_DOC,
+	REDIR_OUT,
+	REDIR_OUT_APPEND
+}				t_redir_type;
+
+typedef struct	s_redirect
+{
+	t_redir_type	type;
+	int				cmd_id;
+	int				group_id;
+	char			*file_name;
+}				t_redirect;
+
+typedef enum e_inst_type
+{
+	INSTR_CMD,
+	INSTR_OR,
+	INSTR_AND
+}				t_instr_type;
+
+typedef struct s_instruction
+{
+	t_instr_type	type;
+	t_cmd			*cmd;
+}				t_instruction;
 
 typedef struct s_minishell
 {
-	t_list	**cmds;
+	t_list	**instructions;
+	t_list	**redirect;
 	t_list	**tokens;
 }				t_minishell;
 

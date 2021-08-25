@@ -14,7 +14,7 @@ void	print_tokens(t_list **tokens)
 		token = (t_token *)curr->content;
 		printf("%s<%s", CLR_GRAY, CLR_WHITE);
 		print_quote_type(token->quote_type);
-		if (token->type == operator)
+		if (token->type == OPERATOR)
 			printf("%s", CLR_PURPLE);
 		printf("%s", token->str);
 		print_quote_type(token->quote_type);

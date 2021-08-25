@@ -32,10 +32,11 @@ void	ft_error_exit(t_err_code err)
 void	print_err(t_err_code err)
 {
 	// TODO check if err_code is still necessary or if strerror(errno) is enough
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	if (err == MEMORY_FAIL)
-		printf("minishell: %s\n", strerror(errno));
+		ft_putstr_fd(strerror(errno), STDERR_FILENO);
 	else if (err == WRONG_QUOTING)
-		printf("minishell: Wrong quoting\n");
+		ft_putstr_fd("Wrong quoting\n", STDERR_FILENO);
 	else
-		printf("minishell: An error occurred\n");
+		ft_putstr_fd("An error occurred\n", STDERR_FILENO);
 }
