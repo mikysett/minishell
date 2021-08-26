@@ -38,5 +38,6 @@
 # include "types.h"
 # include "core.h"
 # include "parser.h"
+# include "executor.h"
 
 #endif

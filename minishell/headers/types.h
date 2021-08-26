@@ -95,6 +95,9 @@ typedef struct s_minishell
 	t_list	**instructions;
 	t_list	**redirect;
 	t_list	**tokens;
+
+	int		exit_code;
+	// TODO add envp
 }				t_minishell;
 
 #endif

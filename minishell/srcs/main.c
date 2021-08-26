@@ -1,6 +1,7 @@
 #include "minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+int	main(void)
+// int	main(int argc, char **argv, char **envp)
 {
 	char		*line;
 	t_minishell	*minishell;
@@ -17,11 +18,16 @@ int	main(int argc, char **argv, char **envp)
 			if (prog_state(TAKE_STATE) == PROG_OK)
 			{
 				// TODO execute the commands
+				// WORK IN PROGRESS execute the commands
+
+				// minishell->exit_code = executor(minishell,
+				// 	*minishell->instructions,
+				// 	EXIT_SUCCESS);
 			}
 		}
 		if (line)
 			free(line);
 	}
 	// rl_clear_history(); // Compatibility issues with mac os
-	return (0);
+	return (minishell->exit_code);
 }
