@@ -1,11 +1,13 @@
 #include "minishell.h"
 
-t_minishell	*init_minishell_mem(void)
+t_minishell	*init_minishell_mem(char **envp)
 {
 	t_minishell	*minishell;
 
 	minishell = calloc_or_exit(1, sizeof(t_minishell));
 	get_minishell(minishell);
+	// TODO It will be better to create a deep copy instead of just passing the reference
+	minishell->envp = envp;
 	return (minishell);
 }
 
