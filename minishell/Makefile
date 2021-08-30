@@ -21,7 +21,7 @@ DIR_O	=	obj
 BASIC_SRCS	:=	$(shell find $(DIR_S) -name *.c)
 
 SRCS		:= $(BASIC_SRCS)
-		
+
 
 BONUS_SRCS	:= $(BASIC_SRCS)
 
@@ -37,7 +37,7 @@ DEPS	=	$(shell find $(HEADERS) -name *.h)
 
 CC		=	gcc
 
-CFLAGS	=	-Wall -Wextra -fsanitize=address
+CFLAGS	=	-Wall -Wextra -g
 INCLUDES	= -I $(HEADERS) -I $(LIBFT)
 
 LIBS	=	-L./$(LIBFT) -lft -lreadline
