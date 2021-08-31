@@ -3,12 +3,11 @@
 nb_tests=${#cmd_bash[@]}
 
 for (( i=0; i < $nb_tests; i++ )); do
-	expected_out=$(eval ${cmd_bash[$i]} 2>&1)
+	expected_out=$(eval bash ${cmd_bash[$i]} 2>&1)
 	test -e ${fileout[$i]} && expected_fileout=$(< ${fileout[$i]} cat) || expected_fileout=""
-	if [ "${filein[$i]}" != "${fileout[$i]}" ]; then
-		rm -f ${fileout[$i]}
-	fi;
-	test_out=$(eval ${prog_pathname} ${cmd_pipex[$i]} 2>&1)
+	rm -f ${fileout[$i]}
+
+	test_out=$(eval ${prog_pathname} ${cmd_bash[$i]} 2>&1)
 	test -e ${fileout[$i]} && test_fileout=$(< ${fileout[$i]} cat) || test_fileout=""
 	rm -f ${fileout[$i]}
 	
@@ -29,9 +28,9 @@ for (( i=0; i < $nb_tests; i++ )); do
 	echo -e "$TEST_CLR Test    $i:$WHT ${cmd_bash[$i]}"
 	if [ $OK_OUT == 0 ]; then
 		echo -e "$YEL Differences in program output:$WHT"
-		echo -e "$BLU bash output :$WHT"
+		echo -e "$BLU bash output     :$WHT"
 		echo "$expected_out"
-		echo -e "$BLU pipex output:$WHT"
+		echo -e "$BLU minishell output:$WHT"
 		echo "$test_out"
 	fi;
 	if [ $OK_FILEOUT == 0 ]; then
