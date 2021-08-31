@@ -1,12 +1,25 @@
 #include "minishell.h"
 
-int	main(void)
+static void	interactive_mode(t_minishell *minishell);
+static void	non_interactive_mode(t_minishell *minishell, char *bash_file);
+
+int	main(int argc, char **argv, char **envp)
 // int	main(int argc, char **argv, char **envp)
 {
-	char		*line;
 	t_minishell	*minishell;
 
-	minishell = init_minishell_mem();
+	minishell = init_minishell_mem(envp);
+	if (argc == 1)
+		interactive_mode(minishell);
+	else
+		non_interactive_mode(minishell, argv[1]);
+	return (minishell->exit_code);
+}
+
+static void	interactive_mode(t_minishell *minishell)
+{
+	char		*line;
+
 	while (1)
 	{
 		prog_state(PROG_OK);
@@ -29,5 +42,29 @@ int	main(void)
 			free(line);
 	}
 	// rl_clear_history(); // Compatibility issues with mac os
-	return (minishell->exit_code);
+}
+
+static void	non_interactive_mode(t_minishell *minishell, char *bash_file)
+{
+	int		bash_file_fd;
+	char	*line;
+
+	bash_file_fd = ft_init_file_fd(bash_file, O_RDONLY, 0);
+	if (!bash_file_fd)
+		return ;
+	
+	while (get_next_line(bash_file_fd, &line))
+	{
+		minishell = parser(line, minishell);
+		if (prog_state(TAKE_STATE) == PROG_OK)
+		{
+			// TODO execute the commands
+			// WORK IN PROGRESS execute the commands
+
+			// minishell->exit_code = executor(minishell,
+			// 	*minishell->instructions,
+			// 	EXIT_SUCCESS);
+		}
+		free(line);
+	}
 }

@@ -23,7 +23,7 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 
 int	exec_cmd(t_cmd *cmd, t_list **redirect)
 {
-	if (setup_redirect(redirect, cmd->id, cmd->group))
+	if (setup_redirect(redirect, cmd->id))
 	{
 		if (cmd->is_builtin)
 			return (exec_builtin(cmd));
@@ -41,5 +41,28 @@ int	exec_builtin(t_cmd *cmd)
 
 int	exec_std_cmd(t_cmd *cmd)
 {
+	pid_t	child_pid;
+	int		wstatus;
+
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		perror("minishell");
+		return (EXIT_FAILURE);
+	}
+	else if (child_pid == 0)
+	{
+		if (execve(cmd->name,cmd->args, get_envp()) == -1)
+		{
+			perror(cmd->name);
+			return (EXIT_FAILURE);
+		}
+	}
+	else if (wait(&wstatus) == -1)
+	{
+		perror("minishell");
+		return (EXIT_FAILURE);
+	}
+	// TODO handle errors
 	return (EXIT_SUCCESS);
 }

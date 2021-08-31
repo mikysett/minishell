@@ -11,6 +11,12 @@
 # define CLR_PURPLE	"\033[0;35m"
 # define CLR_CYAN	"\033[0;36m"
 
+typedef enum e_pipe_side
+{
+	PIPE_READ = 0,
+	PIPE_WRITE = 1
+}				t_pipe_side;
+
 typedef enum e_token_type
 {
 	WORD,
@@ -55,14 +61,15 @@ typedef struct s_cmd
 	int		group;
 	char	*name;
 	char	**args;
-	bool	is_first_in_group;
-	bool	is_last_in_group;
-	bool	is_builtin;
+	bool	is_first_in_group;	// can be removed ?
+	bool	is_last_in_group;	// can be removed ?
+	bool	is_builtin;			// if better can be implemented in executor
 }				t_cmd;
 
 typedef enum e_redir_type
 {
-	REDIR_PIPE,
+	REDIR_PIPE_IN,
+	REDIR_PIPE_OUT,
 	REDIR_IN,
 	REDIR_HERE_DOC,
 	REDIR_OUT,
@@ -97,6 +104,7 @@ typedef struct s_minishell
 	t_list	**tokens;
 
 	int		exit_code;
+	char	**envp;
 	// TODO add envp
 }				t_minishell;
 

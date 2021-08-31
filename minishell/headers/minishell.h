@@ -31,6 +31,7 @@
 # include <readline/history.h>
 
 # include "libft.h"
+# include "get_next_line.h"
 
 # include "debug.h"
 
@@ -39,5 +40,6 @@
 # include "core.h"
 # include "parser.h"
 # include "executor.h"
+# include "environment.h"
 
 #endif
