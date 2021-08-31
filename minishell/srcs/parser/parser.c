@@ -21,8 +21,39 @@ static t_list **interprets_tokens(t_list **tokens)
 	gets_commands(tokens, cmd_list, 1);
 }
 
+static int		is_redir_op(char *str)
+{
+	return (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0 
+			|| ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0 
+			|| ft_strncmp(str, "|", 1) == 0)
+}
 
-t_list	 *add_redir(t_list *curr_token, int cmd_id)
+static int		is_logic_op(char *str)
+{
+	return (ft_strncmp(str, "||", 2) == 0 || ft_strncmp(str, "&&", 2) == 0)
+}
+
+static int		is_paren_op(char *str)
+{
+	return (ft_strncmp(str, "(", 1) == 0 || ft_strncmp(str, ")", 1) == 0)
+}
+
+static void		insert_redir(t_token *token, int cmd_id)
+{
+	t_minishell ms;
+
+	ms = get_minishell(NULL);
+}
+
+static void		insert_cmd(t_token *token, int cmd_id)
+{
+	t_minishell ms;
+
+	ms = get_minishell(NULL);
+}
+
+/* will not always add a redirection; */
+static t_list	 *handle_redir(t_list *curr_token, int cmd_id)
 {
 	t_token *token;
 
@@ -34,13 +65,13 @@ t_list	 *add_redir(t_list *curr_token, int cmd_id)
 			if (!token->next || ((t_token *)token->next)->type != WORD)
 			{
 				prog_state(PARSER_ERROR);
-				break ;
+				break;
 			}
 			insert_redir(token, cmd_id);
 			curr_token = curr_token->next;
 		}
 		else
-			break ;
+			break;
 		curr_token = curr_token->next;
 	}
 	return (curr_token);
@@ -51,14 +82,14 @@ t_list	 *add_redir(t_list *curr_token, int cmd_id)
 static void gets_command(t_list **tokens, t_list **cmd_list, int closed)
 {
 	t_instruction *inst;
-	int i;
 
-	curr_token = add_redir(curr_token, cmd_id);
+	// how to account for cmd_id? 
+	curr_token = handle_redir(curr_token, cmd_id);
 	if (is_logic_op(curr_token))
 		;
 	else if (curr_token->type == WORD)
 		curr_token = set_cmd(curr_token, cmd_id);
-	else if (open parentesis)
+	else if (ft_strncmp(curr_token->str, "(", 2) == 0);
 		curr_token = gets_commands(curr_token->next, true);
-	curr_token = add_redir(curr_token, cmd_id);
+	curr_token = handle_redir(curr_token, cmd_id);
 }
