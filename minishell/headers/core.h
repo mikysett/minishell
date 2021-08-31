@@ -10,7 +10,8 @@ void			print_err(t_err_code err);
 
 // MEMORY_UTIL
 
-t_minishell	*init_minishell_mem(char **envp);
+t_minishell	*init_minishell(char *prog_name, char **envp);
+char		**ft_set_paths(char **envp);
 void		*calloc_or_exit(size_t count, size_t size);
 void		free_minishell(t_minishell *ms);
 void		free_tokens(t_minishell *ms);

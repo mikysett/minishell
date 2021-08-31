@@ -5,6 +5,7 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 	t_instruction	*instr;
 	const int		curr_group = ((t_instruction *)curr->content)->cmd->group;
 
+	// int	original_in = dup(STDIN_FILENO);
 	while (curr)
 	{
 		instr = (t_instruction *)curr->content;
@@ -18,6 +19,7 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 			return (cmd_exit_code);
 		curr = curr->next;
 	}
+	// dup2(original_in, STDIN_FILENO);
 	return (cmd_exit_code);
 }
 
@@ -43,26 +45,59 @@ int	exec_std_cmd(t_cmd *cmd)
 {
 	pid_t	child_pid;
 	int		wstatus;
+	t_minishell	*ms;
 
+	ms = get_minishell(NULL);
+	cmd->full_path = set_cmd_path(cmd->name, ms->paths);
 	child_pid = fork();
 	if (child_pid == -1)
 	{
-		perror("minishell");
+		perror(ms->prog_name);
 		return (EXIT_FAILURE);
 	}
 	else if (child_pid == 0)
 	{
-		if (execve(cmd->name,cmd->args, get_envp()) == -1)
+		if (execve(cmd->full_path, cmd->args, ms->envp) == -1)
 		{
 			perror(cmd->name);
-			return (EXIT_FAILURE);
+			return (EXIT_FAILURE); // return 127 as special error? (check man)
 		}
 	}
 	else if (wait(&wstatus) == -1)
 	{
-		perror("minishell");
+		perror(ms->prog_name);
 		return (EXIT_FAILURE);
 	}
-	// TODO handle errors
 	return (EXIT_SUCCESS);
 }
+
+char	*set_cmd_path(char *cmd_name, char **paths)
+{
+	int		i;
+	int		cmd_path_size;
+	int		cmd_name_len;
+	char	*full_path;
+
+	i = 0;
+	cmd_name_len = ft_strlen(cmd_name);
+	if (paths)
+	{
+		while (paths[i])
+		{
+			cmd_path_size = ft_strlen(paths[i]) + cmd_name_len + 2;
+			full_path = ft_calloc(cmd_path_size, sizeof(char));
+			if (!full_path)
+				ft_error_exit(MEMORY_FAIL);
+			ft_strlcat(full_path, paths[i], cmd_path_size);
+			ft_strlcat(full_path, "/", cmd_path_size);
+			ft_strlcat(full_path, cmd_name, cmd_path_size);
+			if (access(full_path, F_OK | X_OK) == 0)
+				return (full_path);
+			free(full_path);
+			full_path = 0;
+			i++;
+		}
+	}
+	return (ft_strdup(cmd_name));
+}
+

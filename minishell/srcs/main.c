@@ -8,7 +8,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*minishell;
 
-	minishell = init_minishell_mem(envp);
+	minishell = init_minishell(argv[0], envp);
 	if (argc == 1)
 		interactive_mode(minishell);
 	else
@@ -30,6 +30,7 @@ static void	interactive_mode(t_minishell *minishell)
 			minishell = parser(line, minishell);
 			if (prog_state(TAKE_STATE) == PROG_OK)
 			{
+				DEBUG(create_fake_cmd(minishell);)
 				// TODO execute the commands
 				// WORK IN PROGRESS execute the commands
 
