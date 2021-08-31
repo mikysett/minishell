@@ -36,11 +36,10 @@ static void gets_command(t_list **tokens, t_list **cmd_list)
 			command->name = tokens[i]->str;
 		else
 		{
-			if (tokens[i]->type == OPERATOR) // and is valid operator
+			if (tokens[i]->str == 'C' &&) // and is valid operator
 			{
 				gets_command(&tokens[i], cmd_list);
 				while (tokens[i] !=  // closing operator
 					// advance i;
 	}
 }
-
