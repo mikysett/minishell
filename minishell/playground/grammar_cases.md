@@ -12,5 +12,8 @@
 ## the ``(`` and ``)``
 
 **if ``(command)``**, it works;  
+**if ``((command))``**, it doesn't work;  
+	- any subsequent number of paren will fail, if balanced, and attribute the error to the middle command;  
+	- if unbalanced, the error is on the unbalanced paren;  
 
 
