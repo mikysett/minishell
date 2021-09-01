@@ -18,21 +18,7 @@ static t_list **interprets_tokens(t_list **tokens)
 {
 	t_list **cmd_list;
 	cmd_list = calloc_or_exit(1, sizeof(t_list **));
-	gets_commands(tokens, cmd_list, 1);
-}
-
-static void		insert_redir(t_token *token, int cmd_id)
-{
-	t_minishell ms;
-
-	ms = get_minishell(NULL);
-}
-
-static void		insert_cmd(t_token *token, int cmd_id)
-{
-	t_minishell ms;
-
-	ms = get_minishell(NULL);
+	gets_commands(tokens, cmd_list, 0, 1);
 }
 
 /* will not always add a redirection; */
@@ -62,16 +48,28 @@ static t_list	 *handle_redir(t_list *curr_token, int cmd_id)
 
 /* returns a t_list of commands.
  * always assumes every function call is the first token */
-gets_commands(t_list **tokens, t_list **cmd_list, int cmd_id, int closed)
+gets_commands(t_list **tokens, int cmd_id, int closed)
 {
 	t_instruction *inst;
 
 	curr_token = handle_redir(curr_token, cmd_id);
 	if (is_logic_op(curr_token))
-		;
+		curr_token = in;
 	else if (curr_token->type == WORD)
 		curr_token = set_cmd(curr_token, cmd_id);
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0);
-		curr_token = gets_commands(curr_token->next, true);
+		curr_token = gets_commands(curr_token->next, cmd_id + 1, true);
 	curr_token = handle_redir(curr_token, cmd_id);
 }
+
+static void		insert_instruction(t_token *token, int cmd_id, int instr_type)
+{
+	t_minishell ms;
+
+	ms = get_minishell(NULL);
+	if (instr_type == INSTR_CMD)
+	{
+
+	}
+}
+
