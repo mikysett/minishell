@@ -21,23 +21,6 @@ static t_list **interprets_tokens(t_list **tokens)
 	gets_commands(tokens, cmd_list, 1);
 }
 
-static int		is_redir_op(char *str)
-{
-	return (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0 
-			|| ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0 
-			|| ft_strncmp(str, "|", 1) == 0)
-}
-
-static int		is_logic_op(char *str)
-{
-	return (ft_strncmp(str, "||", 2) == 0 || ft_strncmp(str, "&&", 2) == 0)
-}
-
-static int		is_paren_op(char *str)
-{
-	return (ft_strncmp(str, "(", 1) == 0 || ft_strncmp(str, ")", 1) == 0)
-}
-
 static void		insert_redir(t_token *token, int cmd_id)
 {
 	t_minishell ms;
@@ -79,11 +62,10 @@ static t_list	 *handle_redir(t_list *curr_token, int cmd_id)
 
 /* returns a t_list of commands.
  * always assumes every function call is the first token */
-static void gets_command(t_list **tokens, t_list **cmd_list, int closed)
+gets_commands(t_list **tokens, t_list **cmd_list, int cmd_id, int closed)
 {
 	t_instruction *inst;
 
-	// how to account for cmd_id? 
 	curr_token = handle_redir(curr_token, cmd_id);
 	if (is_logic_op(curr_token))
 		;

@@ -17,4 +17,10 @@ void			save_token(t_list **tokens, t_token *curr_token);
 bool			is_operator(char *str);
 char			*next_token(char *s, t_quote_type token_type);
 
+// PARSER_UTILS
+
+int				is_paren_op(char *str);
+int				is_logic_op(char *str);
+int				is_redir_op(char *str);
+
 #endif
