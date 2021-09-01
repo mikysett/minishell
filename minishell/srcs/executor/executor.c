@@ -25,15 +25,20 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 
 int	exec_cmd(t_cmd *cmd, t_list **redirect)
 {
+	int	cmd_exit_code;
+
 	if (setup_redirect(redirect, cmd->id))
 	{
 		if (cmd->is_builtin)
-			return (exec_builtin(cmd));
+			cmd_exit_code = exec_builtin(cmd);
 		else
-			return (exec_std_cmd(cmd));
+			cmd_exit_code = exec_std_cmd(cmd);
 	}
 	else
-		return (EXIT_FAILURE);
+		cmd_exit_code = EXIT_FAILURE;
+	restore_std_in(get_minishell(NULL));
+	restore_std_out(get_minishell(NULL));
+	return (EXIT_FAILURE);
 }
 
 int	exec_builtin(t_cmd *cmd)

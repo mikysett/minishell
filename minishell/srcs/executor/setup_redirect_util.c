@@ -25,6 +25,7 @@ static bool	set_here_doc(char *limiter)
 	char		*line;
 	int			here_doc_pipe[2];
 
+	save_std_in(get_minishell(NULL));
 	// TODO could be rethinked to use set_redir_pipe and exploiting
 	// the same modus operandi
 	if (ft_init_pipe_fd(here_doc_pipe) == false)
@@ -54,6 +55,7 @@ static bool	set_redir_in(char *file_name)
 {
 	int	file_fd;
 
+	save_std_in(get_minishell(NULL));
 	file_fd = ft_init_file_fd(file_name, O_RDONLY, 0);
 	if (file_fd == -1)
 		return (false);
@@ -66,6 +68,7 @@ static bool	set_redir_out(char *file_name, t_redir_type type)
 {
 	int	file_fd;
 
+	save_std_out(get_minishell(NULL));
 	if (type == REDIR_OUT)
 		file_fd = ft_init_file_fd(file_name,
 			O_CREAT | O_TRUNC | O_WRONLY, 0644);
@@ -86,6 +89,7 @@ static bool	set_redir_pipe(t_redir_type type)
 
 	if (type == REDIR_PIPE_OUT)
 	{
+		save_std_out(get_minishell(NULL));
 		if (ft_init_pipe_fd(cmd_pipe) == false)
 			return (false);
 		if (ft_set_dup2(cmd_pipe[PIPE_WRITE], STDOUT_FILENO) == false)
@@ -93,6 +97,7 @@ static bool	set_redir_pipe(t_redir_type type)
 	}
 	else
 	{
+		save_std_in(get_minishell(NULL));
 		if (ft_set_dup2(cmd_pipe[PIPE_READ], STDIN_FILENO) == false)
 			return (false);
 	}

@@ -10,8 +10,10 @@ bool	setup_redirect(t_list **redirect, int id)
 	{
 		curr_redir = (t_redirect *)curr->content;
 		if (curr_redir->cmd_id == id)
+		{
 			if (!make_redir(curr_redir))
 				return (false);
+		}
 		curr = curr->next;
 	}
 	return (true);

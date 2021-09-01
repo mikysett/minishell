@@ -100,8 +100,15 @@ void	print_redirections(t_list **redir)
 void	create_fake_cmd(t_minishell *ms)
 {
 	t_redirect fake_redir1;
-	t_instruction	fake_instr;
-	t_cmd			fake_cmd;
+	t_redirect fake_redir2;
+	t_redirect fake_redir3;
+	t_redirect fake_redir4;
+
+	t_instruction	fake_instr1;
+	t_instruction	fake_instr2;
+
+	t_cmd			fake_cmd1;
+	t_cmd			fake_cmd2;
 
 	ms->instructions = malloc(sizeof(t_instruction *));
 	ms->redirect = malloc(sizeof(t_redirect *));
@@ -112,17 +119,33 @@ void	create_fake_cmd(t_minishell *ms)
 	fake_redir1.file_name = ft_strdup("filein1");
 	fake_redir1.type = REDIR_IN;
 
+	fake_redir2.cmd_id = 0;
+	fake_redir2.type = REDIR_PIPE_OUT;
+
+	fake_redir3.cmd_id = 1;
+	fake_redir3.type = REDIR_PIPE_IN;
+
 	*(ms->redirect) = ft_lstnew(&fake_redir1);
+	ft_lstadd_back(ms->redirect, ft_lstnew(&fake_redir2));
+	ft_lstadd_back(ms->redirect, ft_lstnew(&fake_redir3));
 
-	fake_instr.type = INSTR_CMD;
-	*(ms->instructions) = ft_lstnew(&fake_instr);
+	fake_instr1.type = INSTR_CMD;
+	fake_instr2.type = INSTR_CMD;
+	*(ms->instructions) = ft_lstnew(&fake_instr1);
+	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr2));
 
-	fake_cmd.args = ft_split("cat", ' ');
-	fake_cmd.id = 0;
-	fake_cmd.is_builtin = false;
-	fake_cmd.name = ft_strdup("cat");
+	fake_cmd1.args = ft_split("cat", ' ');
+	fake_cmd1.id = 0;
+	fake_cmd1.is_builtin = false;
+	fake_cmd1.name = ft_strdup("cat");
 
-	fake_instr.cmd = &fake_cmd;
+	fake_cmd2.args = ft_split("wc -l", ' ');
+	fake_cmd2.id = 1;
+	fake_cmd2.is_builtin = false;
+	fake_cmd2.name = ft_strdup("wc");
+
+	fake_instr1.cmd = &fake_cmd1;
+	fake_instr2.cmd = &fake_cmd2;
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);

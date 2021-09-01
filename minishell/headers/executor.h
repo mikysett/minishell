@@ -18,4 +18,10 @@ int		ft_init_file_fd(char *file, int oflag, int chmod);
 // SETUP_REDIRECT_UTIL
 bool	make_redir(t_redirect *redir);
 
+// STD_IO_STREAMS
+void	save_std_in(t_minishell *ms);
+void	save_std_out(t_minishell *ms);
+void	restore_std_in(t_minishell *ms);
+void	restore_std_out(t_minishell *ms);
+
 #endif

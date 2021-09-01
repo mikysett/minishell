@@ -98,6 +98,14 @@ typedef struct s_instruction
 	t_cmd			*cmd;
 }				t_instruction;
 
+typedef struct s_std_io
+{
+	int		stdin_fd;
+	int		stdout_fd;
+	bool	stdin_saved;
+	bool	stdout_saved;
+}				t_std_io;
+
 typedef struct s_minishell
 {
 	char	*prog_name;
@@ -105,6 +113,8 @@ typedef struct s_minishell
 	t_list	**instructions;
 	t_list	**redirect;
 	t_list	**tokens;
+
+	t_std_io	streams;
 
 	char	**envp;
 	char	**paths;
