@@ -61,6 +61,7 @@ static bool	set_redir_in(char *file_name)
 		return (false);
 	if (ft_set_dup2(file_fd, STDIN_FILENO) == false)
 		return (false);
+	DEBUG(fprintf(stderr, "!!!! - redir_in\n");)
 	return (true);
 }
 
@@ -79,12 +80,12 @@ static bool	set_redir_out(char *file_name, t_redir_type type)
 		return (false);
 	if (ft_set_dup2(file_fd, STDOUT_FILENO) == false)
 		return (false);
+	DEBUG(fprintf(stderr, "!!!! - redir_out\n");)
 	return (true);
 }
 
 static bool	set_redir_pipe(t_redir_type type)
 {
-	int			file_fd;
 	static int	cmd_pipe[2];
 
 	if (type == REDIR_PIPE_OUT)
@@ -94,12 +95,14 @@ static bool	set_redir_pipe(t_redir_type type)
 			return (false);
 		if (ft_set_dup2(cmd_pipe[PIPE_WRITE], STDOUT_FILENO) == false)
 			return (false);
+		DEBUG(fprintf(stderr, "!!!! - redir_pipe WRITE in STDOUT\n");)
 	}
 	else
 	{
 		save_std_in(get_minishell(NULL));
 		if (ft_set_dup2(cmd_pipe[PIPE_READ], STDIN_FILENO) == false)
 			return (false);
+		DEBUG(fprintf(stderr, "!!!! - redir_pipe READ in STDIN\n");)
 	}
 	return (true);
 }

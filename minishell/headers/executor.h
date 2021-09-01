@@ -11,6 +11,7 @@ char	*set_cmd_path(char *cmd_name, char **paths);
 
 // SETUP_REDIRECT
 bool	setup_redirect(t_list **redirect, int id);
+bool	is_redir_in(t_redir_type type);
 bool	ft_set_dup2(int dup_from_fd, int dup_to_fd);
 bool	ft_init_pipe_fd(int pipe_fd[2]);
 int		ft_init_file_fd(char *file, int oflag, int chmod);
@@ -19,6 +20,7 @@ int		ft_init_file_fd(char *file, int oflag, int chmod);
 bool	make_redir(t_redirect *redir);
 
 // STD_IO_STREAMS
+void	restore_std_io(bool has_redir_out, bool has_redir_in);
 void	save_std_in(t_minishell *ms);
 void	save_std_out(t_minishell *ms);
 void	restore_std_in(t_minishell *ms);

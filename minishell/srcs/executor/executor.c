@@ -27,17 +27,22 @@ int	exec_cmd(t_cmd *cmd, t_list **redirect)
 {
 	int	cmd_exit_code;
 
+	// if (!strcmp(cmd->name, "wc"))
+	// {
+	// 	fprintf(stderr, "closing stdout\n");
+	// 	close(STDOUT_FILENO);
+	// }
 	if (setup_redirect(redirect, cmd->id))
 	{
+		fprintf(stderr, "executing a command\n");
 		if (cmd->is_builtin)
 			cmd_exit_code = exec_builtin(cmd);
 		else
 			cmd_exit_code = exec_std_cmd(cmd);
+		fprintf(stderr, "cmd executed\n");
 	}
 	else
 		cmd_exit_code = EXIT_FAILURE;
-	restore_std_in(get_minishell(NULL));
-	restore_std_out(get_minishell(NULL));
 	return (EXIT_FAILURE);
 }
 

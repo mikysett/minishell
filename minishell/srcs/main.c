@@ -16,7 +16,7 @@ int	main(int argc, char **argv, char **envp)
 	return (minishell->exit_code);
 }
 
-static void	interactive_mode(t_minishell *minishell)
+static void	interactive_mode(t_minishell *ms)
 {
 	char		*line;
 
@@ -24,19 +24,18 @@ static void	interactive_mode(t_minishell *minishell)
 	{
 		prog_state(PROG_OK);
 		line = readline("minishell$ ");
+		// WORK IN PROGRESS execute the commands
 		if (line && *line)
 		{
 			add_history(line);
-			minishell = parser(line, minishell);
+			ms = parser(line, ms);
 			if (prog_state(TAKE_STATE) == PROG_OK)
 			{
-				DEBUG(create_fake_cmd(minishell);)
-				// TODO execute the commands
-				// WORK IN PROGRESS execute the commands
-
-				// minishell->exit_code = executor(minishell,
-				// 	*minishell->instructions,
-				// 	EXIT_SUCCESS);
+				DEBUG(
+					create_fake_cmd3(ms);
+				)
+				restore_std_in(ms);
+				restore_std_out(ms);
 			}
 		}
 		if (line)
