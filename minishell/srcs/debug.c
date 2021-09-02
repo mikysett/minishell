@@ -131,10 +131,8 @@ void	create_fake_cmd0(t_minishell *ms)
 // <filein1 cat | wc -l
 void	create_fake_cmd1(t_minishell *ms)
 {
-	t_redirect fake_redir1;
 	t_redirect fake_redir2;
 	t_redirect fake_redir3;
-	t_redirect fake_redir4;
 
 	t_instruction	fake_instr1;
 	t_instruction	fake_instr2;
@@ -147,19 +145,13 @@ void	create_fake_cmd1(t_minishell *ms)
 	*ms->instructions = NULL;
 	*ms->redirect = NULL;
 
-	// fake_redir1.cmd_id = 0;
-	// fake_redir1.file_name = ft_strdup("filein1");
-	// fake_redir1.type = REDIR_IN;
-
 	fake_redir2.cmd_id = 0;
 	fake_redir2.type = REDIR_PIPE_OUT;
 
 	fake_redir3.cmd_id = 1;
 	fake_redir3.type = REDIR_PIPE_IN;
 
-	// *(ms->redirect) = ft_lstnew(&fake_redir1);
 	*(ms->redirect) = ft_lstnew(&fake_redir2);
-	// ft_lstadd_back(ms->redirect, ft_lstnew(&fake_redir2));
 	ft_lstadd_back(ms->redirect, ft_lstnew(&fake_redir3));
 
 
@@ -183,7 +175,6 @@ void	create_fake_cmd1(t_minishell *ms)
 	print_redirections(ms->redirect);
 	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
 }
-
 
 // <filein1 wc -l >out2
 void	create_fake_cmd2(t_minishell *ms)
@@ -382,8 +373,6 @@ void	create_fake_cmd4(t_minishell *ms)
 	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
 }
 
-
-
 // <<EOF wc -l
 void	create_fake_cmd5(t_minishell *ms)
 {
@@ -413,6 +402,49 @@ void	create_fake_cmd5(t_minishell *ms)
 	fake_cmd1.group = 0;
 	fake_cmd1.is_builtin = false;
 	fake_cmd1.name = ft_strdup("wc");
+	fake_instr1.cmd = &fake_cmd1;
+	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr1));
+
+	print_instructions(ms->instructions);
+	print_redirections(ms->redirect);
+	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+}
+
+// echo this is a test
+void	create_fake_cmd6(t_minishell *ms)
+{
+	t_redirect fake_redir1;
+	t_redirect fake_redir2;
+
+	t_instruction	fake_instr1;
+
+	t_cmd			fake_cmd1;
+
+	ms->instructions = malloc(sizeof(t_instruction *));
+	ms->redirect = malloc(sizeof(t_redirect *));
+	*ms->instructions = NULL;
+	*ms->redirect = NULL;
+
+	fake_redir1.cmd_id = 0;
+	fake_redir1.file_name = ft_strdup("filein1");
+	fake_redir1.type = REDIR_IN;
+
+	fake_redir2.cmd_id = 0;
+	fake_redir2.file_name = ft_strdup("out2");
+	fake_redir2.type = REDIR_OUT;
+
+	*(ms->redirect) = NULL;
+	// ft_lstadd_back(ms->redirect, ft_lstnew(&fake_redir1));
+	// ft_lstadd_back(ms->redirect, ft_lstnew(&fake_redir2));
+
+	*(ms->instructions) = NULL;
+
+	fake_instr1.type = INSTR_CMD;
+	fake_cmd1.args = ft_split("pwd", ' ');
+	fake_cmd1.id = 0;
+	fake_cmd1.group = 0;
+	fake_cmd1.is_builtin = false;
+	fake_cmd1.name = ft_strdup("pwd");
 	fake_instr1.cmd = &fake_cmd1;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr1));
 
