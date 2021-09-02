@@ -8,6 +8,7 @@ static void		insert_token_in_list(void *instruction, int instr_type);
 t_minishell	*parser(char *line, t_minishell *minishell)
 {
 	minishell->tokens = calloc_or_exit(1, sizeof(t_list *));
+	minishell->instructions = calloc_or_exit(1, sizeof(t_list *));
 	minishell->tokens = lexer(line, minishell->tokens);
 	if (prog_state(TAKE_STATE) == PROG_OK)
 		interprets_tokens(minishell->tokens, 0, 0, 0);
