@@ -6,7 +6,7 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 	minishell->tokens = lexer(line, minishell->tokens);
 	if (prog_state(TAKE_STATE) == PROG_OK)
 	{
-		// TODO proper parser
+		interprets_tokens(tokens);
 	}
 	DEBUG(print_tokens(minishell->tokens);)
 	return (minishell);
@@ -18,11 +18,10 @@ static t_list **interprets_tokens(t_list **tokens)
 {
 	t_list **cmd_list;
 	cmd_list = calloc_or_exit(1, sizeof(t_list **));
-	gets_commands(tokens, cmd_list, 0, 1);
+	gets_commands(tokens, 0, 0, 1);
 }
 
-/* returns a t_list of commands.
- * always assumes every function call is the first token */
+/* always assumes every function call is the first token */
 gets_commands(t_list **tokens, int cmd_id, int cmd_group, int closed)
 {
 	t_instruction *inst;
@@ -33,7 +32,7 @@ gets_commands(t_list **tokens, int cmd_id, int cmd_group, int closed)
 	else if (curr_token->type == WORD)
 		curr_token = handle_cmd(curr_token, cmd_id, cmd_group);
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0);
-		curr_token = gets_commands(curr_token->next, cmd_id + 1, true);
+		curr_token = gets_commands(curr_token->next, cmd_id + 1, cmd_group + 1, true);
 	curr_token = handle_redir(curr_token, cmd_id);
 }
 
@@ -41,7 +40,7 @@ gets_commands(t_list **tokens, int cmd_id, int cmd_group, int closed)
 /* TODO how to handle malloc in case of failure?
  * takes the name of the command, and then the
  * length of the node sequence w/ words;
- * if length > 1, args should be allocated in char** */
+ * if length > 1, args are allocated in char** */
 static t_list	*handle_command(t_token *curr_token, int cmd_id, int cmd_group)
 {
 	t_cmd	*cmd;
@@ -53,6 +52,7 @@ static t_list	*handle_command(t_token *curr_token, int cmd_id, int cmd_group)
 	length = take_length_of_command(curr_token);
 	cmd->name = (t_token *)curr_token->content->str;
 	cmd->id = cmd_id;
+	cmd->group = cmd_group;
 	curr_token = curr_token->next;
 	if (length > 1)
 		cmd->args = calloc_or_exit(length, sizeof(char **));
@@ -66,8 +66,9 @@ static t_list	*handle_command(t_token *curr_token, int cmd_id, int cmd_group)
 	return (curr_token);
 }
 
-/* will not always add a redirection; */
-static t_list	 *handle_redir(t_list *curr_token, int cmd_id)
+/* TODO might be shaky regarding "(null) < command" situations
+ * will not always add a redirection; */
+static t_list	 *handle_redir(t_list *curr_token, int cmd_id, int closed)
 {
 	t_token *token;
 
@@ -91,7 +92,8 @@ static t_list	 *handle_redir(t_list *curr_token, int cmd_id)
 	return (curr_token);
 }
 
-
+/* TODO this function can be generalized to accept all tokens,
+ * typecasting (if needed) according to instr_type */
 static void		insert_token_in_list(t_token *token, int instr_type)
 {
 	t_minishell ms;
@@ -102,26 +104,3 @@ static void		insert_token_in_list(t_token *token, int instr_type)
 
 	}
 }
-
-/* gets a node object, and retrieves the amount of words
- * in that command */
-static	int		take_length_of_command(t_list *node)
-{
-	int i;
-	t_token *token;
-
-	i = 0;
-	if (!node)
-		return (0);
-	while (node)
-	{
-		token = (t_token *)node->content;
-		if (token->type == WORD)
-			i++;
-		else
-			break;
-		node = node->next;
-	}
-	return (i);
-}
-

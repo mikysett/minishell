@@ -18,9 +18,9 @@ bool			is_operator(char *str);
 char			*next_token(char *s, t_quote_type token_type);
 
 // PARSER_UTILS
-
 int				is_paren_op(char *str);
 int				is_logic_op(char *str);
 int				is_redir_op(char *str);
+int				take_length_of_command(t_list *node);
 
 #endif
