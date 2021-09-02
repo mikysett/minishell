@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-bool	setup_redirect(t_list **redirect, int id)
+bool	setup_redirect(t_std_io *std_io, t_list **redirect, int id)
 {
 	t_list		*curr;
 	t_redirect	*curr_redir;
@@ -19,7 +19,7 @@ bool	setup_redirect(t_list **redirect, int id)
 				has_redir_in = true;
 			else if (has_redir_out == false)
 				has_redir_out = true;
-			if (!make_redir(curr_redir))
+			if (!make_redir(std_io, curr_redir))
 				return (false);
 		}
 		curr = curr->next;
@@ -28,42 +28,3 @@ bool	setup_redirect(t_list **redirect, int id)
 	return (true);
 }
 
-bool	is_redir_in(t_redir_type type)
-{
-	if (type == REDIR_HERE_DOC || type == REDIR_IN || type == REDIR_PIPE_IN)
-		return (true);
-	return (false);
-}
-
-bool	ft_set_dup2(int dup_from_fd, int dup_to_fd)
-{
-	if (dup2(dup_from_fd, dup_to_fd) == -1)
-	{
-		perror("minishell");
-		return (false);
-	}
-	return (true);
-}
-
-bool	ft_init_pipe_fd(int pipe_fd[2])
-{
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("minishell");
-		return (false);
-	}
-	return (true);
-}
-
-int	ft_init_file_fd(char *file, int oflag, int chmod)
-{
-	int	file_fd;
-
-	if (chmod)
-		file_fd = open(file, oflag, chmod);
-	else
-		file_fd = open(file, oflag);
-	if (file_fd == -1)
-		perror(file);
-	return (file_fd);
-}

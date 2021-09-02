@@ -32,10 +32,9 @@ static void	interactive_mode(t_minishell *ms)
 			if (prog_state(TAKE_STATE) == PROG_OK)
 			{
 				DEBUG(
-					create_fake_cmd3(ms);
+					create_fake_cmd4(ms);
 				)
-				restore_std_in(ms);
-				restore_std_out(ms);
+				restore_std_io(false, false);
 			}
 		}
 		if (line)
@@ -44,7 +43,7 @@ static void	interactive_mode(t_minishell *ms)
 	// rl_clear_history(); // Compatibility issues with mac os
 }
 
-static void	non_interactive_mode(t_minishell *minishell, char *bash_file)
+static void	non_interactive_mode(t_minishell *ms, char *bash_file)
 {
 	int		bash_file_fd;
 	char	*line;
@@ -52,18 +51,17 @@ static void	non_interactive_mode(t_minishell *minishell, char *bash_file)
 	bash_file_fd = ft_init_file_fd(bash_file, O_RDONLY, 0);
 	if (!bash_file_fd)
 		return ;
-	
+
+	prog_state(PROG_OK);
 	while (get_next_line(bash_file_fd, &line))
 	{
-		minishell = parser(line, minishell);
+		ms = parser(line, ms);
 		if (prog_state(TAKE_STATE) == PROG_OK)
 		{
-			// TODO execute the commands
-			// WORK IN PROGRESS execute the commands
-
-			// minishell->exit_code = executor(minishell,
-			// 	*minishell->instructions,
-			// 	EXIT_SUCCESS);
+			DEBUG(
+				create_fake_cmd4(ms);
+			)
+			restore_std_io(false, false);
 		}
 		free(line);
 	}

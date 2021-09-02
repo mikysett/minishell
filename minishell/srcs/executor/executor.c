@@ -4,42 +4,37 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 {
 	t_instruction	*instr;
 	const int		curr_group = ((t_instruction *)curr->content)->cmd->group;
+	t_std_io		*std_io;
 
-	// int	original_in = dup(STDIN_FILENO);
+	std_io = &ms->streams;
 	while (curr)
 	{
 		instr = (t_instruction *)curr->content;
 		if (instr->type == INSTR_CMD && instr->cmd->group != curr_group)
 			return (executor(ms, curr, cmd_exit_code));
 		else if (instr->type == INSTR_CMD)
-			cmd_exit_code = exec_cmd(instr->cmd, ms->redirect);
+			cmd_exit_code = exec_cmd(instr->cmd, std_io, ms->redirect);
 		else if (instr->type == INSTR_OR && cmd_exit_code == EXIT_SUCCESS)
 			return (cmd_exit_code);
 		else if (instr->type == INSTR_AND && cmd_exit_code != EXIT_SUCCESS)
 			return (cmd_exit_code);
 		curr = curr->next;
 	}
-	// dup2(original_in, STDIN_FILENO);
 	return (cmd_exit_code);
 }
 
-int	exec_cmd(t_cmd *cmd, t_list **redirect)
+int	exec_cmd(t_cmd *cmd, t_std_io *std_io, t_list **redirect)
 {
 	int	cmd_exit_code;
 
-	// if (!strcmp(cmd->name, "wc"))
-	// {
-	// 	fprintf(stderr, "closing stdout\n");
-	// 	close(STDOUT_FILENO);
-	// }
-	if (setup_redirect(redirect, cmd->id))
+	if (setup_redirect(std_io, redirect, cmd->id))
 	{
-		fprintf(stderr, "executing a command\n");
+		DEBUG(fprintf(stderr, "executing a command\n");)
 		if (cmd->is_builtin)
 			cmd_exit_code = exec_builtin(cmd);
 		else
 			cmd_exit_code = exec_std_cmd(cmd);
-		fprintf(stderr, "cmd executed\n");
+		DEBUG(fprintf(stderr, "cmd executed (in exec_cmd)\n");)
 	}
 	else
 		cmd_exit_code = EXIT_FAILURE;
@@ -78,6 +73,7 @@ int	exec_std_cmd(t_cmd *cmd)
 		perror(ms->prog_name);
 		return (EXIT_FAILURE);
 	}
+	DEBUG(fprintf(stderr, "cmd executed\n");)
 	return (EXIT_SUCCESS);
 }
 

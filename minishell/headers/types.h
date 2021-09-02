@@ -104,6 +104,9 @@ typedef struct s_std_io
 	int		stdout_fd;
 	bool	stdin_saved;
 	bool	stdout_saved;
+
+	int		curr_in;
+	int		curr_out;
 }				t_std_io;
 
 typedef struct s_minishell
