@@ -32,14 +32,14 @@
 
 # include "libft.h"
 # include "get_next_line.h"
+# include "types.h"
 
 # include "debug.h"
 
-# include "libft.h"
-# include "types.h"
 # include "core.h"
 # include "parser.h"
 # include "executor.h"
 # include "environment.h"
+# include "cmd_builtin.h"
 
 #endif

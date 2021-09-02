@@ -60,6 +60,7 @@ typedef struct s_cmd
 	int		id;
 	int		group;
 	char	*name;
+	char	*full_path;
 	char	**args;
 	bool	is_first_in_group;	// can be removed ?
 	bool	is_last_in_group;	// can be removed ?
@@ -98,15 +99,31 @@ typedef struct s_instruction
 	t_cmd			*cmd;
 }				t_instruction;
 
+typedef struct s_std_io
+{
+	int		stdin_fd;
+	int		stdout_fd;
+	bool	stdin_saved;
+	bool	stdout_saved;
+
+	int		curr_in;
+	int		curr_out;
+}				t_std_io;
+
 typedef struct s_minishell
 {
+	char	*prog_name;
+	
 	t_list	**instructions;
 	t_list	**redirect;
 	t_list	**tokens;
 
-	int		exit_code;
+	t_std_io	streams;
+
 	char	**envp;
-	// TODO add envp
+	char	**paths;
+
+	int		exit_code;
 }				t_minishell;
 
 #endif

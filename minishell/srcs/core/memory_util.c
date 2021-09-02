@@ -1,14 +1,32 @@
 #include "minishell.h"
 
-t_minishell	*init_minishell_mem(char **envp)
+t_minishell	*init_minishell(char *prog_name, char **envp)
 {
 	t_minishell	*minishell;
 
 	minishell = calloc_or_exit(1, sizeof(t_minishell));
 	get_minishell(minishell);
+	minishell->prog_name = prog_name;
 	// TODO It will be better to create a deep copy instead of just passing the reference
 	minishell->envp = envp;
+	minishell->paths = ft_set_paths(envp);
+	minishell->streams.curr_in = STDIN_FILENO;
+	minishell->streams.curr_out = STDOUT_FILENO;
 	return (minishell);
+}
+
+char	**ft_set_paths(char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (envp[i])
+	{
+		if (!ft_strncmp(envp[i], "PATH=", 5))
+			return (ft_split(&envp[i][5], ':'));
+		i++;
+	}
+	return (NULL);
 }
 
 void	*calloc_or_exit(size_t count, size_t size)
