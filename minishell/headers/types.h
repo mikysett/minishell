@@ -88,7 +88,8 @@ typedef enum e_inst_type
 {
 	INSTR_CMD,
 	INSTR_OR,
-	INSTR_AND
+	INSTR_AND,
+	INSTR_REDIR
 }				t_instr_type;
 
 typedef struct s_instruction
