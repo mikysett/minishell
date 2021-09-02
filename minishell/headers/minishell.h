@@ -40,5 +40,6 @@
 # include "parser.h"
 # include "executor.h"
 # include "environment.h"
+# include "cmd_builtin.h"
 
 #endif

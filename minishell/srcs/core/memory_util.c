@@ -11,7 +11,7 @@ t_minishell	*init_minishell(char *prog_name, char **envp)
 	minishell->envp = envp;
 	minishell->paths = ft_set_paths(envp);
 	minishell->streams.curr_in = STDIN_FILENO;
-	minishell->streams.curr_out = STDOUT_FILENO;
+	minishell->streams.curr_out = STDOUT_FILENO;
 	return (minishell);
 }
 

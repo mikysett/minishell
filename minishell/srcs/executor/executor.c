@@ -43,6 +43,12 @@ int	exec_cmd(t_cmd *cmd, t_std_io *std_io, t_list **redirect)
 
 int	exec_builtin(t_cmd *cmd)
 {
+	if (!ft_strncmp("echo", cmd->name, 5))
+		return (echo_builtin(cmd->args));
+	else if (!ft_strncmp("cd", cmd->name, 3))
+		return (cd_builtin(cmd->args));
+	else if (!ft_strncmp("pwd", cmd->name, 4))
+		return (pwd_builtin(cmd->args));
 	return (EXIT_SUCCESS);
 }
 

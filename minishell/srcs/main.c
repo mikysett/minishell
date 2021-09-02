@@ -32,7 +32,7 @@ static void	interactive_mode(t_minishell *ms)
 			if (prog_state(TAKE_STATE) == PROG_OK)
 			{
 				DEBUG(
-					create_fake_cmd4(ms);
+					create_fake_cmd6(ms);
 				)
 				restore_std_io(false, false);
 			}
