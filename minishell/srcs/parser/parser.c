@@ -5,34 +5,32 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 	minishell->tokens = calloc_or_exit(1, sizeof(t_list *));
 	minishell->tokens = lexer(line, minishell->tokens);
 	if (prog_state(TAKE_STATE) == PROG_OK)
-	{
-		interprets_tokens(tokens);
-	}
+		interprets_tokens(tokens, 0, 0, 0);
 	DEBUG(print_tokens(minishell->tokens);)
 	return (minishell);
 }
 
-/* returns a t_list **of commands.
- * calls gets_commands once, and passes cmd_list by ref */
-static t_list **interprets_tokens(t_list **tokens)
-{
-	t_list **cmd_list;
-	cmd_list = calloc_or_exit(1, sizeof(t_list **));
-	gets_commands(tokens, 0, 0, 1);
-}
-
-/* always assumes every function call is the first token */
-gets_commands(t_list **tokens, int cmd_id, int cmd_group, int closed)
+/* always assumes every function call is the first token
+ * is the list of  exaustive?
+ *
+ * */
+static void interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int closed)
 {
 	t_instruction *inst;
 
 	curr_token = handle_redir(curr_token, cmd_id, cmd_group, true);
-	if (is_logic_op(curr_token))
-		// passing;
-	else if (curr_token->type == WORD)
-		curr_token = handle_cmd(curr_token, cmd_id, cmd_group);
+	if (curr_token->type == WORD)
+		curr_token = handle_command(curr_token, cmd_id, cmd_group);
+	else if (is_logic_op(curr_token))
+		;// passing
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0);
 		curr_token = gets_commands(curr_token->next, cmd_id + 1, cmd_group + 1, true);
+	/* this has the be thought of;
+	 * how to handle nesting?
+	 * how to avoid empty parens? */
+	else if (ft_strncmp(curr_token->str, ")", 2) == 0);
+		;// passing
+		//curr_token = gets_commands(curr_token->next, cmd_id + 1, cmd_group + 1, true);
 	curr_token = handle_redir(curr_token, cmd_id);
 }
 
@@ -97,10 +95,14 @@ static t_list	 *handle_redir(t_list *curr_token, int cmd_id, int closed)
 static void		insert_token_in_list(t_token *token, int instr_type)
 {
 	t_minishell ms;
+	t_list	new_node;
 
 	ms = get_minishell(NULL);
 	if (instr_type == INSTR_CMD)
 	{
-
+		new_node = ft_lstnew(token);
+		if !(new_node)
+			return;
+		ft_lstadd_back(ms->instructions, new_node);
 	}
 }
