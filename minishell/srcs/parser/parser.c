@@ -1,9 +1,10 @@
 #include "minishell.h"
 
-static t_list	*interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int closed);
-static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group);
-static t_list	*handle_redir(t_list **tokens, int cmd_id, int closed);
-static void		insert_token_in_list(void *instruction, int instr_type);
+static t_list			*interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int closed);
+static t_list			*handle_command(t_list **tokens, int cmd_id, int cmd_group);
+static t_list			*look_for_redir(t_list **tokens, int cmd_id, int closed);
+static void				insert_token_in_list(void *instruction, int instr_type);
+static t_redirect		*handle_redir(t_list *curr_token, int cmd_id, int before);
 
 t_minishell	*parser(char *line, t_minishell *minishell)
 {
@@ -25,7 +26,9 @@ static t_list *interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int
 	t_list *curr_token;
 
 	curr_token = *tokens;
-	//curr_token = handle_redir(curr_token, cmd_id, cmd_group, true);
+
+
+	curr_token = look_for_redir(curr_token, cmd_id, cmd_group, true);
 	if (((t_token *)curr_token->content)->type == WORD)
 		curr_token = handle_command(tokens, cmd_id, cmd_group);
 	else if (is_logic_op(((t_token *)curr_token->content)->str))
@@ -33,8 +36,8 @@ static t_list *interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int
 	else if (ft_strncmp(((t_token *)curr_token->content)->str, "(", 2) == 0)
 		curr_token = interprets_tokens(&(*tokens)->next, cmd_id + 1, cmd_group + 1, true);
 	/* this has the be thought of;
-	 * how to handle nesting?
-	 * how to avoid empty parens? */
+		 * how to handle nesting?
+		 * how to avoid empty parens? */
 	else if (ft_strncmp(((t_token *)curr_token->content)->str, ")", 2) == 0)
 		;// passing
 		//curr_token = gets_commands(curr_token->next, cmd_id + 1, cmd_group + 1, true);
@@ -71,10 +74,11 @@ static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
 }
 
 /* TODO might be shaky regarding "(null) < command" situations
- * will not always add a redirection;
-static t_list	 *handle_redir(t_list *curr_token, int cmd_id, int closed)
+ * the function checks for consecutive redirections, whenever appliable? */
+static t_list	 *look_for_redir(t_list *curr_token, int cmd_id, int before)
 {
-	t_token *token;
+	t_token		*token;
+	t_redirect	*redir;
 
 	while (curr_token)
 	{
@@ -86,7 +90,7 @@ static t_list	 *handle_redir(t_list *curr_token, int cmd_id, int closed)
 				prog_state(PARSER_ERROR);
 				break;
 			}
-			handle_redir(token, cmd_id);
+			handle_redir(curr_token, cmd_id, before);
 			curr_token = curr_token->next;
 		}
 		else
@@ -94,7 +98,24 @@ static t_list	 *handle_redir(t_list *curr_token, int cmd_id, int closed)
 		curr_token = curr_token->next;
 	}
 	return (curr_token);
-}*/
+}
+
+static t_redirect	 *handle_redir(t_list *curr_token, int cmd_id, int before)
+{
+	t_redirect *redir;
+
+	if (ft_strncmp(token->str == "|", 1) == 0)
+	{
+		/* there was nothing preceding pipe! */
+		if (before)
+		{
+			prog_state(PARSER_ERROR);
+			return (NULL);
+		}
+		*redir = calloc_or_exit(1, sizeof(t_redirect));
+		/* every pipe originates two redir instructions, in and out */
+	}
+}
 
 /* TODO this function can be generalized to accept all tokens,
  * typecasting (if needed) according to instr_type */
