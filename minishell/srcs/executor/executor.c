@@ -71,7 +71,7 @@ int	exec_std_cmd(t_cmd *cmd)
 		if (execve(cmd->full_path, cmd->args, ms->envp) == -1)
 		{
 			perror(cmd->name);
-			return (EXIT_FAILURE); // return 127 as special error? (check man)
+			exit(EXIT_FAILURE); // return 127 as special error? (check man)
 		}
 	}
 	else if (wait(&wstatus) == -1)
