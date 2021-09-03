@@ -62,8 +62,6 @@ typedef struct s_cmd
 	char	*name;
 	char	*full_path;
 	char	**args;
-	bool	is_first_in_group;	// can be removed ?
-	bool	is_last_in_group;	// can be removed ?
 	bool	is_builtin;			// if better can be implemented in executor
 }				t_cmd;
 
@@ -81,7 +79,6 @@ typedef struct	s_redirect
 {
 	t_redir_type	type;
 	int				cmd_id;
-	int				group_id;
 	char			*file_name;
 }				t_redirect;
 

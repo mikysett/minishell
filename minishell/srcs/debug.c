@@ -452,3 +452,5 @@ void	create_fake_cmd6(t_minishell *ms)
 	print_redirections(ms->redirect);
 	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
 }
+
+// <filein1 cat < filein2 | tail | wc -l > out2

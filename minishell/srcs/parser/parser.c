@@ -21,27 +21,40 @@ t_minishell	*parser(char *line, t_minishell *minishell)
  * is the list of  exaustive?
  *
  * */
-static t_list *interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int closed)
+static t_list *interprets_tokens(t_list *curr, int cmd_id, int cmd_group, int closed)
 {
-	t_list *curr_token;
+	t_token *curr_token;
+	const t_list	*start_pos = curr;
+	curr_token = (t_token *)curr->content;
 
-	curr_token = *tokens;
+	curr = look_for_redir(curr_token, cmd_id);
+	curr_token = (t_token *)curr->content;
+	if (prog_state(TAKE_STATE) != PROG_OK)
+		return (NULL);
+	// Legal case: < test-1 | wc !!
+	if (curr != start_pos && curr_token->type == OPERATOR)
+	{
+		prog_state(PARSER_ERROR);
+		return (NULL);
+	}
 
-
-	curr_token = look_for_redir(curr_token, cmd_id, cmd_group, true);
-	if (((t_token *)curr_token->content)->type == WORD)
-		curr_token = handle_command(tokens, cmd_id, cmd_group);
-	else if (is_logic_op(((t_token *)curr_token->content)->str))
+	if (curr_token->type == WORD)
+		curr_token = handle_command(curr, cmd_id, cmd_group);
+	else if (is_logic_op(curr_token->str))
 		;// passing
-	else if (ft_strncmp(((t_token *)curr_token->content)->str, "(", 2) == 0)
-		curr_token = interprets_tokens(&(*tokens)->next, cmd_id + 1, cmd_group + 1, true);
+	else if (ft_strncmp(curr_token->str, "(", 2) == 0)
+		curr_token = interprets_tokens(&(*curr)->next, cmd_id + 1, cmd_group + 1, true);
 	/* this has the be thought of;
 		 * how to handle nesting?
 		 * how to avoid empty parens? */
-	else if (ft_strncmp(((t_token *)curr_token->content)->str, ")", 2) == 0)
+	else if (ft_strncmp(curr_token->str, ")", 2) == 0)
 		;// passing
 		//curr_token = gets_commands(curr_token->next, cmd_id + 1, cmd_group + 1, true);
-	//curr_token = handle_redir(curr_token, cmd_id);
+	curr = look_for_redir(curr_token, cmd_id);
+	curr_token = (t_token *)curr->content;
+	if (prog_state(TAKE_STATE) != PROG_OK)
+		return (NULL);
+	// check if pipe
 }
 
 
@@ -49,13 +62,29 @@ static t_list *interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int
  * takes the name of the command, and then the
  * length of the node sequence w/ words;
  * if length > 1, args are allocated in char** */
+
+t_cmd	*init_instruction(t_minishell *ms)
+{
+	t_instruction	*instr;
+	t_list			*new_instr;
+
+	instr = calloc_or_exit(1, sizeof(t_instruction));
+	new_instr = ft_lstnew(instr);
+	if (!new_instr)
+		ft_error_exit(MEMORY_FAIL);
+	ft_lstadd_back(ms->instructions, new_instr);
+	instr->cmd = calloc_or_exit(1, sizeof(t_cmd));
+}
+
 static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
 {
 	t_cmd	*cmd;
 	int		length;
 	int		i;
 
-	cmd = (t_cmd *)calloc_or_exit(1, sizeof(t_cmd));
+	init_instruction(get_minishell(NULL));
+
+	cmd = calloc_or_exit(1, sizeof(t_cmd));
 	length = take_length_of_command(*tokens);
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
