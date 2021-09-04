@@ -9,6 +9,8 @@ int	main(int argc, char **argv, char **envp)
 	t_minishell	*minishell;
 
 	minishell = init_minishell(argv[0], envp);
+	print_env(minishell->envp);
+	print_env_vars(*minishell->env_vars);
 	if (argc == 1)
 		interactive_mode(minishell);
 	else

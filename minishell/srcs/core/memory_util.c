@@ -7,8 +7,8 @@ t_minishell	*init_minishell(char *prog_name, char **envp)
 	minishell = calloc_or_exit(1, sizeof(t_minishell));
 	get_minishell(minishell);
 	minishell->prog_name = prog_name;
-	// TODO It will be better to create a deep copy instead of just passing the reference
-	minishell->envp = envp;
+	minishell->env_vars = init_env_vars(envp);
+	save_envp(minishell);
 	minishell->paths = ft_set_paths(envp);
 	minishell->streams.curr_in = STDIN_FILENO;
 	minishell->streams.curr_out = STDOUT_FILENO;

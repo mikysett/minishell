@@ -17,6 +17,13 @@ typedef enum e_pipe_side
 	PIPE_WRITE = 1
 }				t_pipe_side;
 
+typedef struct	s_env_var
+{
+	char	*key;
+	char	*value;
+	bool	is_printed;
+}				t_env_var;
+
 typedef enum e_token_type
 {
 	WORD,
@@ -120,6 +127,7 @@ typedef struct s_minishell
 	t_std_io	streams;
 
 	char	**envp;
+	t_list	**env_vars;
 	char	**paths;
 
 	int		exit_code;
