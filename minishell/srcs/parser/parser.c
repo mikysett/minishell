@@ -50,24 +50,6 @@ static t_list *interprets_tokens(t_list *curr, int cmd_id, int cmd_group, int cl
 	// check if pipe
 }
 
-/* initiates an instruction outside of the main
- * handling functions; this ensures allocation is retrievable
- * in case of failure at the handler function */
-
-static t_cmd	*init_instruction(t_minishell *ms)
-{
-	t_instruction	*instr;
-	t_list			*new_instr;
-
-	instr = calloc_or_exit(1, sizeof(t_instruction));
-	new_instr = ft_lstnew(instr);
-	if (!new_instr)
-		ft_error_exit(MEMORY_FAIL);
-	ft_lstadd_back(ms->instructions, new_instr);
-	instr->cmd = calloc_or_exit(1, sizeof(t_cmd));
-	return (instr->cmd);
-}
-
 static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
 {
 	t_cmd	*cmd;
@@ -102,17 +84,11 @@ static t_list	*handle_redir(t_list *curr_token, t_list *next_token, int cmd_id)
 	{
 		token = (t_token *)(curr_token->content);
 		redir = init_instruction(get_minishell(NULL));
-		if (token->type == OPERATOR && ft_strncmp(token->str, "<", 2) == 0)
-			redir->type = REDIR_IN;
-		else if (token->type == OPERATOR && ft_strncmp(token->str, ">", 2) == 0)
-			redir->type = REDIR_OUT;
-		else if (token->type == OPERATOR && ft_strncmp(token->str, "<<" , 3) == 0)
-			redir->type = REDIR_HERE_DOC;
-		else if (token->type == OPERATOR && ft_strncmp(token->str, ">>" , 3) == 0)
-			redir->type = REDIR_OUT_APPEND;
+		redir->type = get_redir_type(token);
 		redir->file_name = ft_strdup(next->str);
 		redir->cmd_id = cmd_id;
-		curr_token = curr_token->next->next;
+		curr_token = next_token->next;
+		next_token = curr_token->next;
 	}
 	if !(next_token)
 	{
