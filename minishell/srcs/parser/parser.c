@@ -73,29 +73,28 @@ static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
 	return (*tokens);
 }
 
-/* TODO what to return in here?
+/* TODO is the recursive redir cmd_id the same?
  * the function checks for consecutive redirections */
-static t_list	*handle_redir(t_list *curr_token, t_list *next_token, int cmd_id)
+static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
 	t_token		*token;
 	t_redirect	*redir;
 
-	while (curr_token && next_token && is_redir_op((t_token *)(curr_token->content)->str))
+	token = (t_token *)(curr_node->content);
+	if (is_redir_op(token->str))
 	{
-		token = (t_token *)(curr_token->content);
+		if !(next_token)
+		{
+			prog_state(PARSER_ERROR);
+			return (NULL);
+		}
 		redir = init_instruction(get_minishell(NULL));
 		redir->type = get_redir_type(token);
 		redir->file_name = ft_strdup(next->str);
 		redir->cmd_id = cmd_id;
-		curr_token = next_token->next;
-		next_token = curr_token->next;
+		return (handle_redir(next_node->next, curr_node->next, cmd_id));
 	}
-	if !(next_token)
-	{
-		prog_state(PARSER_ERROR);
-		return (NULL);
-	}
-	return (curr_token->next);
+	return (curr_node);
 }
 
 /* TODO this function can be generalized to accept all tokens,
