@@ -1,8 +1,6 @@
 #ifndef ENVIRONMENT_H
 # define ENVIRONMENT_H
 
-char	**get_envp(void);
-
 // ENV_VARS
 t_list	**init_env_vars(char **envp);
 

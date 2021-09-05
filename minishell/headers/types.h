@@ -58,7 +58,6 @@ typedef enum e_prog_state
 typedef struct s_token
 {
 	t_token_type	type;
-	t_quote_type	quote_type;
 	char			*str;
 }				t_token;
 

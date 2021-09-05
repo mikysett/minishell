@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-static char	*next_non_space(char *str);
-
 char	*next_token(char *s, t_quote_type quote_type)
 {
 	if (quote_type != NO_QUOTING)
@@ -10,14 +8,14 @@ char	*next_token(char *s, t_quote_type quote_type)
 	return (s);
 }
 
-static char	*next_non_space(char *str)
+char	*next_non_space(char *str)
 {
 	while (*str)
 	{
 		if (*str == ' ' || *str == '\t')
 			str++;
 		else
-			break ;
+			return (str);
 	}
 	return (str);
 }
