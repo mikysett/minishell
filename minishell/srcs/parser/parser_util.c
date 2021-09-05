@@ -52,7 +52,7 @@ int		take_length_of_command(t_list *node)
 /* initiates an instruction outside of the main
  * handling functions; this ensures allocation is retrievable
  * in case of failure at the handler function */
-t_cmd	*init_instruction(t_minishell *ms)
+t_cmd	*init_instruction(t_minishell *ms, t_instr_type type){
 {
 	t_instruction	*instr;
 	t_list			*new_instr;
@@ -62,6 +62,7 @@ t_cmd	*init_instruction(t_minishell *ms)
 	if (!new_instr)
 		ft_error_exit(MEMORY_FAIL);
 	ft_lstadd_back(ms->instructions, new_instr);
+	instr->type = type;
 	instr->cmd = calloc_or_exit(1, sizeof(t_cmd));
 	return (instr->cmd);
 }

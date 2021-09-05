@@ -21,20 +21,18 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 /* always assumes every function call is the first token
  * TODO ensure comparing of ( ) with their types!
  * Legal case: < test-1 | wc !! */
-static t_list *interprets_tokens(t_list *curr, int cmd_id, int cmd_group, int closed)
+static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group, int closed)
 {
 	t_token			*curr_token;
 	const t_list	*start_pos = curr;
 
-	curr_token = (t_token *)curr->content;
-	curr = look_for_redir(curr_token, cmd_id);
-	curr_token = (t_token *)curr->content;
+	curr_node = look_for_redir(curr_node, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
 	if (curr_token->type == WORD)
 		curr_token = handle_command(curr, cmd_id, cmd_group);
 	else if (is_logic_op(curr_token->str))
-		;// passing
+		curr_token = handle_logical_op(curr_node, cmd_id);
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0)
 		curr_token = interprets_tokens(&(*curr)->next, cmd_id + 1, cmd_group + 1, true);
 	/* this has the be thought of;
@@ -50,13 +48,32 @@ static t_list *interprets_tokens(t_list *curr, int cmd_id, int cmd_group, int cl
 	// check if pipe
 }
 
+/* this seems done, but needs more tools to ensure there is not any silly stuff like && &&, or && || */
+static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
+{
+	t_token		*token;
+	t_instruction logical_op;
+
+	token = (t_token *)(curr_node->content);
+	if (ft_strncmp(token->str, "&&", 3) == 0)
+		logical_op = init_instruction(get_minishell(NULL), INSTR_AND);
+	else if (ft_strncmp(token->str, "||" 3) == 0)
+		logical_op = init_instruction(get_minishell(NULL), INSTR_OR);
+	else
+	{
+		prog_state(PARSER_ERROR);
+		return (NULL);
+	}
+	return (curr_node->next);
+}
+
 static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
 {
 	t_cmd	*cmd;
 	int		length;
 	int		i;
 
-	cmd = init_instruction(get_minishell(NULL));
+	cmd = init_instruction(get_minishell(NULL), INSTR_CMD);
 	length = take_length_of_command(*tokens);
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
@@ -88,7 +105,7 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 			prog_state(PARSER_ERROR);
 			return (NULL);
 		}
-		redir = init_instruction(get_minishell(NULL));
+		redir = init_instruction(get_minishell(NULL), INSTR_REDIR);
 		redir->type = get_redir_type(token);
 		redir->file_name = ft_strdup(next->str);
 		redir->cmd_id = cmd_id;
