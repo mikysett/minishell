@@ -91,53 +91,34 @@ static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
 	return (*tokens);
 }
 
-/* TODO might be shaky regarding "(null) < command" situations
- * the function checks for consecutive redirections, whenever appliable? */
-static t_list	*look_for_redir(t_list *curr_token, int cmd_id)
+/* TODO what to return in here?
+ * the function checks for consecutive redirections */
+static t_list	*handle_redir(t_list *curr_token, t_list *next_token, int cmd_id)
 {
 	t_token		*token;
 	t_redirect	*redir;
 
-	while (curr_token)
+	while (curr_token && next_token && is_redir_op((t_token *)(curr_token->content)->str))
 	{
-		token = (t_token *)curr_token->content;
-		if (is_redir_op(token->str))
-		{
-			curr_token = handle_redir(curr_token, cmd_id, before);
-			curr_token = curr_token->next;
-		}
-		else
-			break;
+		token = (t_token *)(curr_token->content);
+		redir = init_instruction(get_minishell(NULL));
+		if (token->type == OPERATOR && ft_strncmp(token->str, "<", 2) == 0)
+			redir->type = REDIR_IN;
+		else if (token->type == OPERATOR && ft_strncmp(token->str, ">", 2) == 0)
+			redir->type = REDIR_OUT;
+		else if (token->type == OPERATOR && ft_strncmp(token->str, "<<" , 3) == 0)
+			redir->type = REDIR_HERE_DOC;
+		else if (token->type == OPERATOR && ft_strncmp(token->str, ">>" , 3) == 0)
+			redir->type = REDIR_OUT_APPEND;
+		redir->file_name = ft_strdup(next->str);
+		redir->cmd_id = cmd_id;
+		curr_token = curr_token->next->next;
 	}
-	return (curr_token);
-}
-
-/* returns the token with the text, after the redir token
- * merge this with the previous function, for increased sexyness of the code */
-static t_list	*handle_redir(t_token *operator, t_token *file_name, int cmd_id)
-{
-	t_redirect	*redir;
-	t_token		*next;
-
-	redir = init_instruction(get_minishell(NULL));
-	if (token->type == OPERATOR && ft_strncmp(token->str, "<", 2) == 0)
-		redir->type = REDIR_IN;
-	else if (token->type == OPERATOR && ft_strncmp(token->str, ">", 2) == 0)
-		redir->type = REDIR_OUT;
-	else if (token->type == OPERATOR && ft_strncmp(token->str, "<<" , 3) == 0)
-		redir->type = REDIR_HERE_DOC;
-	else if (token->type == OPERATOR && ft_strncmp(token->str, ">>" , 3) == 0)
-		redir->type = REDIR_OUT_APPEND;
-	/* no redir found! */
-	if (curr_token->next != NULL)
-		next = ((t_token *)curr_token->next)->content;
-	else if ((t_list *)curr_token->next == NULL || next->type != WORD)
+	if !(next_token)
 	{
 		prog_state(PARSER_ERROR);
-		return;
+		return (NULL);
 	}
-	redir->file_name = ft_strdup(next->str);
-	redir->cmd_id = cmd_id;
 	return (curr_token->next);
 }
 
