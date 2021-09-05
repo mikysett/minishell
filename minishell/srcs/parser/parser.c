@@ -7,6 +7,9 @@ static void				insert_token_in_list(void *instruction, int instr_type);
 static t_redirect		*handle_redir(t_list *curr_token, int cmd_id, int before);
 static t_cmd			*init_instruction(t_minishell *ms);
 
+/* TODO could there be a while loop over here?
+ * loop while prog_state is ok && there are still tokens left?
+ * and how to ensure proper comman id when it goes into parens? */
 t_minishell	*parser(char *line, t_minishell *minishell)
 {
 	minishell->tokens = calloc_or_exit(1, sizeof(t_list *));
@@ -40,12 +43,9 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group, i
 		 * how to avoid empty parens? */
 	else if (ft_strncmp(curr_token->str, ")", 2) == 0)
 		;// passing
-		//curr_token = gets_commands(curr_token->next, cmd_id + 1, cmd_group + 1, true);
-	curr = look_for_redir(curr_token, cmd_id);
-	curr_token = (t_token *)curr->content;
+	curr_node = look_for_redir(curr_node, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
-	// check if pipe
 }
 
 /* this seems done, but needs more tools to ensure there is not any silly stuff like && &&, or && || */
