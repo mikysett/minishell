@@ -17,16 +17,25 @@ t_minishell	*init_minishell(char *prog_name, char **envp)
 
 char	**ft_set_paths(char **envp)
 {
-	int	i;
+	int		i;
+	char	**paths;
 
 	i = 0;
 	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], "PATH=", 5))
-			return (ft_split(&envp[i][5], ':'));
+		{
+			paths = ft_split(&envp[i][5], ':');
+			if (!paths)
+				ft_error_exit(MEMORY_FAIL);
+			return (paths);
+		}
 		i++;
 	}
-	return (NULL);
+	paths = ft_split("", ' ');
+	if (!paths)
+		ft_error_exit(MEMORY_FAIL);
+	return (paths);
 }
 
 void	*calloc_or_exit(size_t count, size_t size)
@@ -39,33 +48,9 @@ void	*calloc_or_exit(size_t count, size_t size)
 	return (result);
 }
 
-void	free_minishell(t_minishell *ms)
+void	reset_minishell(t_minishell *ms)
 {
-	if (ms)
-	{
-		free_tokens(ms);
-		free(ms);
-	}
-}
-
-void	free_tokens(t_minishell *ms)
-{
-	if (ms->tokens)
-	{
-		ft_lstclear(ms->tokens, del_token);
-		free(ms->tokens);
-		ms->tokens = NULL;
-	}
-}
-
-void	del_token(void *token_void)
-{
-	t_token	*token;
-
-	token = (t_token *)token_void;
-	if (token)
-	{
-		free(token->str);
-		free(token);
-	}
+	ms->tokens = free_lst(ms->tokens, del_token);
+	ms->instructions = free_lst(ms->instructions, del_instruction);
+	ms->redirect = free_lst(ms->redirect, del_redirect);
 }

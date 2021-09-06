@@ -49,6 +49,14 @@ int	exec_builtin(t_cmd *cmd)
 		return (cd_builtin(cmd->args));
 	else if (!ft_strncmp("pwd", cmd->name, 4))
 		return (pwd_builtin(cmd->args));
+	else if (!ft_strncmp("export", cmd->name, 7))
+		return (export_builtin(cmd->args));
+	else if (!ft_strncmp("unset", cmd->name, 6))
+		return (unset_builtin(cmd->args));
+	else if (!ft_strncmp("env", cmd->name, 4))
+		return (env_builtin(cmd->args));
+	else if (!ft_strncmp("exit", cmd->name, 5))
+		return (exit_builtin(cmd->args));
 	return (EXIT_SUCCESS);
 }
 

@@ -11,6 +11,8 @@
 # define CLR_PURPLE	"\033[0;35m"
 # define CLR_CYAN	"\033[0;36m"
 
+# define BUILTIN_INCORRECT_USAGE 2
+
 typedef enum e_pipe_side
 {
 	PIPE_READ = 0,

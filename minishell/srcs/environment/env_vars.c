@@ -1,9 +1,5 @@
 #include "minishell.h"
 
-static int	env_key_len(char *str);
-static void	save_env_var(t_list **env_vars, char *var_str, int key_len);
-static void	add_var_oldpwd(t_list **env_vars);
-
 t_list	**init_env_vars(char **envp)
 {
 	t_list		**env_vars;
@@ -19,22 +15,24 @@ t_list	**init_env_vars(char **envp)
 		curr_key_len = env_key_len(envp[i]);
 		if (!strncmp("OLDPWD=", envp[i], curr_key_len + 1))
 			continue ;
-		save_env_var(env_vars, envp[i], curr_key_len);
+		ft_lstadd_back(env_vars, save_env_var(envp[i], curr_key_len));
 	}
-	add_var_oldpwd(env_vars);
+	ft_lstadd_back(env_vars, save_env_var("OLDPWD", 6));
 	return (env_vars);
 }
 
-static int	env_key_len(char *str)
+int	env_key_len(char *str)
 {
 	const char	*o_str = str;
 
+	if (!str)
+		return (0);
 	while (*str && *str != '=')
 		str++;
 	return (str - o_str);
 }
 
-static void	save_env_var(t_list **env_vars, char *var_str, int key_len)
+t_list	*save_env_var(char *var_str, int key_len)
 {
 	t_list		*new_var;
 	t_env_var	*curr_var;
@@ -46,10 +44,5 @@ static void	save_env_var(t_list **env_vars, char *var_str, int key_len)
 	new_var = ft_lstnew(curr_var);
 	if (!new_var)
 		ft_error_exit(MEMORY_FAIL);
-	ft_lstadd_back(env_vars, new_var);
-}
-
-static void	add_var_oldpwd(t_list **env_vars)
-{
-	save_env_var(env_vars, "OLDPWD", 6);
+	return (new_var);
 }
