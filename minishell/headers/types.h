@@ -86,8 +86,7 @@ typedef enum e_inst_type
 {
 	INSTR_CMD,
 	INSTR_OR,
-	INSTR_AND,
-	INSTR_REDIR
+	INSTR_AND
 }				t_instr_type;
 
 typedef struct s_instruction
@@ -110,7 +109,7 @@ typedef struct s_std_io
 typedef struct s_minishell
 {
 	char	*prog_name;
-	
+
 	t_list	**instructions;
 	t_list	**redirect;
 	t_list	**tokens;

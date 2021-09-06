@@ -62,7 +62,7 @@ t_cmd	*init_instruction(t_minishell *ms, t_instr_type type){
 	if (!new_instr)
 		ft_error_exit(MEMORY_FAIL);
 	ft_lstadd_back(ms->instructions, new_instr);
-	instr->type = type;
 	instr->cmd = calloc_or_exit(1, sizeof(t_cmd));
+	instr->type = type;
 	return (instr->cmd);
 }

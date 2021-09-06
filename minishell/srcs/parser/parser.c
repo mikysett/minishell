@@ -33,11 +33,12 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group, i
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
 	if (curr_token->type == WORD)
-		curr_token = handle_command(curr, cmd_id, cmd_group);
-	else if (is_logic_op(curr_token->str))
-		curr_token = handle_logical_op(curr_node, cmd_id);
+		curr_node = handle_command(curr_node, cmd_id, cmd_group);
+	/* fix is_logic_op to check type and str */
+	else if (is_logic_op(curr_token))
+		curr_node = handle_logical_op(curr_node, cmd_id);
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0)
-		curr_token = interprets_tokens(&(*curr)->next, cmd_id + 1, cmd_group + 1, true);
+		curr_node = interprets_tokens(&(*curr)->next, cmd_id + 1, cmd_group + 1, true);
 	/* this has the be thought of;
 		 * how to handle nesting?
 		 * how to avoid empty parens? */
@@ -90,8 +91,7 @@ static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
 	return (*tokens);
 }
 
-/* TODO is the recursive redir cmd_id the same?
- * the function checks for consecutive redirections */
+/* the function checks for consecutive redirections */
 static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
 	t_token		*token;
