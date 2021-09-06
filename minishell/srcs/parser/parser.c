@@ -5,7 +5,6 @@ static t_list			*handle_command(t_list **tokens, int cmd_id, int cmd_group);
 static t_list			*look_for_redir(t_list **tokens, int cmd_id, int closed);
 static void				insert_token_in_list(void *instruction, int instr_type);
 static t_redirect		*handle_redir(t_list *curr_token, int cmd_id, int before);
-static t_cmd			*init_instruction(t_minishell *ms);
 
 /* TODO could there be a while loop over here?
  * loop while prog_state is ok && there are still tokens left?
@@ -58,7 +57,7 @@ static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
 	token = (t_token *)(curr_node->content);
 	if (ft_strncmp(token->str, "&&", 3) == 0)
 		logical_op = init_instruction(get_minishell(NULL), INSTR_AND);
-	else if (ft_strncmp(token->str, "||" 3) == 0)
+	else if (ft_strncmp(token->str, "||", 3) == 0)
 		logical_op = init_instruction(get_minishell(NULL), INSTR_OR);
 	else
 	{
@@ -100,7 +99,7 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 	token = (t_token *)(curr_node->content);
 	if (is_redir_op(token->str))
 	{
-		if !(next_token)
+		if (!(*next_token))
 		{
 			prog_state(PARSER_ERROR);
 			return (NULL);
