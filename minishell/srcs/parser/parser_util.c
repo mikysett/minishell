@@ -7,7 +7,7 @@ int		is_redir_op(t_token *token)
 	str = token->str;
 	return (token->type == OPERATOR && 
 			(ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0
-			|| ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0);
+			|| ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0));
 }
 
 int		is_logic_op(t_token *token)
@@ -73,7 +73,10 @@ t_cmd	*init_instruction(t_minishell *ms, t_instr_type type)
 	if (!new_instr)
 		ft_error_exit(MEMORY_FAIL);
 	ft_lstadd_back(ms->instructions, new_instr);
-	instr->cmd = calloc_or_exit(1, sizeof(t_cmd));
+	if (type == INSTR_CMD)
+		instr->cmd = calloc_or_exit(1, sizeof(t_cmd));
+	else
+		instr->cmd = NULL;
 	instr->type = type;
 	return (instr->cmd);
 }

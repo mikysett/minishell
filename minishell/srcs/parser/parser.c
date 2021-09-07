@@ -43,7 +43,8 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 		 * how to avoid empty parens? */
 	else if (ft_strncmp(curr_token->str, ")", 2) == 0)
 		;// passing
-	curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
+	if (curr_node)
+		curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
 	return (curr_node);
@@ -53,7 +54,7 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
 {
 	t_token		*token;
-	t_instruction logical_op;
+	t_cmd 		*logical_op;
 
 	(void)cmd_id;
 	token = (t_token *)(curr_node->content);
@@ -99,7 +100,7 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 	t_redirect	*redir;
 
 	token = (t_token *)(curr_node->content);
-	if (is_redir_op(token->str))
+	if (is_redir_op(token))
 	{
 		if (!(*next_token))
 		{
