@@ -27,6 +27,7 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 {
 	t_token			*curr_token;
 
+	curr_token = (t_token *)curr_node->content;
 	curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
@@ -45,6 +46,7 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
+	return (curr_node);
 }
 
 /* this seems done, but needs more tools to ensure there is not any silly stuff like && &&, or && || */

@@ -1,19 +1,31 @@
 #include "minishell.h"
 
-int		is_redir_op(char *str)
+int		is_redir_op(t_token *token)
 {
-	return (ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0
+	char *str;
+
+	str = token->str;
+	return (token->type == OPERATOR && 
+			(ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0
 			|| ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0);
 }
 
-int		is_logic_op(char *str)
+int		is_logic_op(t_token *token)
 {
-	return (ft_strncmp(str, "||", 2) == 0 || ft_strncmp(str, "&&", 2) == 0);
+	char *str;
+
+	str = token->str;
+	return (token->type == OPERATOR && 
+			(ft_strncmp(str, "||", 2) == 0 || ft_strncmp(str, "&&", 2) == 0));
 }
 
-int		is_paren_op(char *str)
+int		is_paren_op(t_token *token)
 {
-	return (ft_strncmp(str, "(", 1) == 0 || ft_strncmp(str, ")", 1) == 0);
+	char *str;
+
+	str = token->str;
+	return (token->type == OPERATOR && 
+			(ft_strncmp(str, "(", 1) == 0 || ft_strncmp(str, ")", 1) == 0));
 }
 
 int		get_redir_type(t_token *token)
@@ -27,7 +39,6 @@ int		get_redir_type(t_token *token)
 	else if (ft_strncmp(token->str, ">>" , 3) == 0)
 		return (REDIR_OUT_APPEND);
 }
-
 
 /* gets a node object, and retrieves the amount of words
  * in that command */
@@ -52,7 +63,7 @@ int		take_length_of_command(t_list *node)
 /* initiates an instruction outside of the main
  * handling functions; this ensures allocation is retrievable
  * in case of failure at the handler function */
-t_cmd	*init_instruction(t_minishell *ms, t_instr_type type){
+t_cmd	*init_instruction(t_minishell *ms, t_instr_type type) 
 {
 	t_instruction	*instr;
 	t_list			*new_instr;
