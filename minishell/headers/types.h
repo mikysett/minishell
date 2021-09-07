@@ -71,7 +71,6 @@ typedef struct s_cmd
 	char	*name;
 	char	*full_path;
 	char	**args;
-	bool	is_builtin;			// if better can be implemented in executor
 }				t_cmd;
 
 typedef enum e_redir_type
