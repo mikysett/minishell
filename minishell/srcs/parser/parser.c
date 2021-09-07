@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-static t_list			*interprets_tokens(t_list **tokens, int cmd_id, int cmd_group, int closed);
-static t_list			*handle_command(t_list **tokens, int cmd_id, int cmd_group);
-static t_list			*look_for_redir(t_list **tokens, int cmd_id, int closed);
+static t_list			*interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group);
+static t_list			*handle_command(t_list *tokens, int cmd_id, int cmd_group);
 static void				insert_token_in_list(void *instruction, int instr_type);
-static t_redirect		*handle_redir(t_list *curr_token, int cmd_id, int before);
+static t_list			*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id);
+static t_list			*handle_logical_op(t_list *curr_node, int cmd_id);
 
 /* TODO could there be a while loop over here?
  * loop while prog_state is ok && there are still tokens left?
@@ -15,7 +15,7 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 	minishell->instructions = calloc_or_exit(1, sizeof(t_list *));
 	minishell->tokens = lexer(line, minishell->tokens);
 	if (prog_state(TAKE_STATE) == PROG_OK)
-		interprets_tokens(minishell->tokens, 0, 0, 0);
+		interprets_tokens(*minishell->tokens, 0, 0);
 	DEBUG(print_tokens(minishell->tokens);)
 	return (minishell);
 }
@@ -23,12 +23,11 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 /* always assumes every function call is the first token
  * TODO ensure comparing of ( ) with their types!
  * Legal case: < test-1 | wc !! */
-static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group, int closed)
+static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 {
 	t_token			*curr_token;
-	const t_list	*start_pos = curr;
 
-	curr_node = look_for_redir(curr_node, cmd_id);
+	curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
 	if (curr_token->type == WORD)
@@ -37,13 +36,13 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group, i
 	else if (is_logic_op(curr_token))
 		curr_node = handle_logical_op(curr_node, cmd_id);
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0)
-		curr_node = interprets_tokens(&(*curr)->next, cmd_id + 1, cmd_group + 1, true);
+		curr_node = interprets_tokens(curr_node->next, cmd_id + 1, cmd_group + 1);
 	/* this has the be thought of;
 		 * how to handle nesting?
 		 * how to avoid empty parens? */
 	else if (ft_strncmp(curr_token->str, ")", 2) == 0)
 		;// passing
-	curr_node = look_for_redir(curr_node, cmd_id);
+	curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
 }
@@ -54,6 +53,7 @@ static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
 	t_token		*token;
 	t_instruction logical_op;
 
+	(void)cmd_id;
 	token = (t_token *)(curr_node->content);
 	if (ft_strncmp(token->str, "&&", 3) == 0)
 		logical_op = init_instruction(get_minishell(NULL), INSTR_AND);
@@ -67,27 +67,27 @@ static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
 	return (curr_node->next);
 }
 
-static t_list	*handle_command(t_list **tokens, int cmd_id, int cmd_group)
+static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 {
 	t_cmd	*cmd;
 	int		length;
 	int		i;
 
 	cmd = init_instruction(get_minishell(NULL), INSTR_CMD);
-	length = take_length_of_command(*tokens);
+	length = take_length_of_command(tokens);
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
-	cmd->name = ((t_token *)(*tokens)->content)->str;
-	*tokens = (*tokens)->next;
+	cmd->name = ((t_token *)tokens->content)->str;
+	tokens = tokens->next;
 	if (length > 1)
 		cmd->args = calloc_or_exit(length, sizeof(char **));
 	i = -1;
 	while (++i != length - 1)
 	{
-		cmd->args[i] = ((t_token *)(*tokens)->content)->str;
-		*tokens = (*tokens)->next;
+		cmd->args[i] = ((t_token *)tokens->content)->str;
+		tokens = tokens->next;
 	}
-	return (*tokens);
+	return (tokens);
 }
 
 /* the function checks for consecutive redirections */
@@ -104,9 +104,10 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 			prog_state(PARSER_ERROR);
 			return (NULL);
 		}
-		redir = init_instruction(get_minishell(NULL), INSTR_REDIR);
+		/* TODO this should have its own function */
+		redir = init_instruction(get_minishell(NULL), 4);
 		redir->type = get_redir_type(token);
-		redir->file_name = ft_strdup(next->str);
+		redir->file_name = ft_strdup(((t_token *)next_node->content)->str);
 		redir->cmd_id = cmd_id;
 		return (handle_redir(next_node->next, curr_node->next, cmd_id));
 	}

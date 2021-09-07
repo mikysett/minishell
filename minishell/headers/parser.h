@@ -22,7 +22,7 @@ int				is_paren_op(char *str);
 int				is_logic_op(char *str);
 int				is_redir_op(char *str);
 int				take_length_of_command(t_list *node);
-t_cmd			*init_instruction(t_minishell *ms);
+t_cmd			*init_instruction(t_minishell *ms, t_instr_type type);
 int				get_redir_type(t_token *token);
 
 #endif
