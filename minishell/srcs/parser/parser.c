@@ -13,10 +13,12 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 {
 	minishell->tokens = calloc_or_exit(1, sizeof(t_list *));
 	minishell->instructions = calloc_or_exit(1, sizeof(t_list *));
+	minishell->redirect = calloc_or_exit(1, sizeof(t_list *));
 	minishell->tokens = lexer(line, minishell->tokens);
 	if (prog_state(TAKE_STATE) == PROG_OK)
 		interprets_tokens(*minishell->tokens, 0, 0);
 	DEBUG(print_tokens(minishell->tokens);)
+	DEBUG(print_instructions(minishell->instructions);)
 	return (minishell);
 }
 
@@ -77,17 +79,23 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 	int		i;
 
 	cmd = init_instruction(get_minishell(NULL), INSTR_CMD);
-	length = take_length_of_command(tokens);
+	length = take_length_of_command(tokens) + 1;
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
-	cmd->name = ((t_token *)tokens->content)->str;
+	cmd->name = ft_strdup(((t_token *)tokens->content)->str);
+	if (!cmd->name)
+		ft_error_exit(MEMORY_FAIL);
 	tokens = tokens->next;
-	if (length > 1)
-		cmd->args = calloc_or_exit(length, sizeof(char **));
-	i = -1;
+	cmd->args = calloc_or_exit(length, sizeof(char **));
+	i = 0;
+	cmd->args[0] = ft_strdup(cmd->name);
+	if (!cmd->args[0])
+		ft_error_exit(MEMORY_FAIL);
 	while (++i != length - 1)
 	{
-		cmd->args[i] = ((t_token *)tokens->content)->str;
+		cmd->args[i] = ft_strdup(((t_token *)tokens->content)->str);
+		if (!cmd->args[i])
+			ft_error_exit(MEMORY_FAIL);
 		tokens = tokens->next;
 	}
 	return (tokens);
@@ -102,7 +110,7 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 	token = (t_token *)(curr_node->content);
 	if (is_redir_op(token))
 	{
-		if (!(*next_token))
+		if (!next_node)
 		{
 			prog_state(PARSER_ERROR);
 			return (NULL);
@@ -111,6 +119,8 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 		redir = init_instruction(get_minishell(NULL), 4);
 		redir->type = get_redir_type(token);
 		redir->file_name = ft_strdup(((t_token *)next_node->content)->str);
+		if (!redir->file_name)
+			ft_error_exit(MEMORY_FAIL);
 		redir->cmd_id = cmd_id;
 		return (handle_redir(next_node->next, curr_node->next, cmd_id));
 	}

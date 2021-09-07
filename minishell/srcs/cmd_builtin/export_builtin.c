@@ -9,6 +9,7 @@ int	export_builtin(char **argv)
 	t_minishell	*ms;
 	int			i;
 
+	fprintf(stderr, "\t\tEXPORT CMD BUILTIN\n");
 	ms = get_minishell(NULL);
 	i = 0;
 	if (args_nb < 2)

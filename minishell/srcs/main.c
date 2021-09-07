@@ -10,8 +10,6 @@ int	main(int argc, char **argv, char **envp)
 	int			exit_code;
 
 	minishell = init_minishell(argv[0], envp);
-	print_env(minishell->envp);
-	print_env_vars(*minishell->env_vars);
 	if (argc == 1)
 		interactive_mode(minishell);
 	else
@@ -36,9 +34,10 @@ static void	interactive_mode(t_minishell *ms)
 			ms = parser(line, ms);
 			if (prog_state(TAKE_STATE) == PROG_OK)
 			{
-				DEBUG(
-					create_fake_cmd6(ms);
-				)
+				executor(ms, *ms->instructions, EXIT_SUCCESS);
+				// DEBUG(
+				// 	create_fake_cmd6(ms);
+				// )
 				restore_std_io(false, false);
 				reset_minishell(ms);
 			}

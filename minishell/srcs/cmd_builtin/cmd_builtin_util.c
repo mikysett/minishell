@@ -10,9 +10,6 @@ int	args_count(char **argv)
 	while (argv[args_nb])
 		args_nb++;
 	return (args_nb);
-<<<<<<< HEAD
-}
-=======
 }
 
 bool	is_valid_identifier(char *str)
@@ -39,4 +36,3 @@ void	print_identifier_error(char *prog_name, char *builtin_name,
 	ft_putstr_fd(invalid_identifier, STDERR_FILENO);
 	ft_putstr_fd("' not a valid identifier\n", STDERR_FILENO);
 }
->>>>>>> master

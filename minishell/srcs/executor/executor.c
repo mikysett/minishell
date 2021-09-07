@@ -1,5 +1,9 @@
 #include "minishell.h"
 
+static int	exec_instr(t_cmd *cmd, t_std_io *std_io, t_list **redirect);
+static int	exec_cmd(t_cmd *cmd);
+static int	exec_std_cmd(t_cmd *cmd);
+
 int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 {
 	t_instruction	*instr;
@@ -13,7 +17,7 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 		if (instr->type == INSTR_CMD && instr->cmd->group != curr_group)
 			return (executor(ms, curr, cmd_exit_code));
 		else if (instr->type == INSTR_CMD)
-			cmd_exit_code = exec_cmd(instr->cmd, std_io, ms->redirect);
+			cmd_exit_code = exec_instr(instr->cmd, std_io, ms->redirect);
 		else if (instr->type == INSTR_OR && cmd_exit_code == EXIT_SUCCESS)
 			return (cmd_exit_code);
 		else if (instr->type == INSTR_AND && cmd_exit_code != EXIT_SUCCESS)
@@ -23,25 +27,20 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 	return (cmd_exit_code);
 }
 
-int	exec_cmd(t_cmd *cmd, t_std_io *std_io, t_list **redirect)
+static int	exec_instr(t_cmd *cmd, t_std_io *std_io, t_list **redirect)
 {
-	int	cmd_exit_code;
-
 	if (setup_redirect(std_io, redirect, cmd->id))
 	{
 		DEBUG(fprintf(stderr, "executing a command\n");)
-		if (cmd->is_builtin)
-			cmd_exit_code = exec_builtin(cmd);
-		else
-			cmd_exit_code = exec_std_cmd(cmd);
+		return (exec_cmd(cmd));
 		DEBUG(fprintf(stderr, "cmd executed (in exec_cmd)\n");)
 	}
 	else
-		cmd_exit_code = EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	return (EXIT_FAILURE);
 }
 
-int	exec_builtin(t_cmd *cmd)
+static int	exec_cmd(t_cmd *cmd)
 {
 	if (!ft_strncmp("echo", cmd->name, 5))
 		return (echo_builtin(cmd->args));
@@ -49,8 +48,6 @@ int	exec_builtin(t_cmd *cmd)
 		return (cd_builtin(cmd->args));
 	else if (!ft_strncmp("pwd", cmd->name, 4))
 		return (pwd_builtin(cmd->args));
-<<<<<<< HEAD
-=======
 	else if (!ft_strncmp("export", cmd->name, 7))
 		return (export_builtin(cmd->args));
 	else if (!ft_strncmp("unset", cmd->name, 6))
@@ -59,16 +56,17 @@ int	exec_builtin(t_cmd *cmd)
 		return (env_builtin(cmd->args));
 	else if (!ft_strncmp("exit", cmd->name, 5))
 		return (exit_builtin(cmd->args));
->>>>>>> master
-	return (EXIT_SUCCESS);
+	else
+		return (exec_std_cmd(cmd));
 }
 
-int	exec_std_cmd(t_cmd *cmd)
+static int	exec_std_cmd(t_cmd *cmd)
 {
 	pid_t				child_pid;
 	int					cmd_exit_status;
 	const t_minishell	*ms = get_minishell(NULL);
 
+	cmd_exit_status = EXIT_SUCCESS;
 	cmd->full_path = set_cmd_path(cmd->name, ms->paths);
 	if (!cmd->full_path)
 		return (EXIT_CMD_NOT_FOUND);

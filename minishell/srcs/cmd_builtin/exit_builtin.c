@@ -9,7 +9,7 @@ int	exit_builtin(char **argv)
 	if (args_nb > 1)
 	{
 		ft_putstr_fd("env: incorrect usage\n", STDERR_FILENO);
-		exit_code = BUILTIN_INCORRECT_USAGE;
+		exit_code = EXIT_INCORRECT_USAGE;
 	}
 	else
 		exit_code = ms->exit_code;
