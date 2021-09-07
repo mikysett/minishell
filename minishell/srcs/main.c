@@ -7,13 +7,18 @@ int	main(int argc, char **argv, char **envp)
 // int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*minishell;
+	int			exit_code;
 
 	minishell = init_minishell(argv[0], envp);
+	print_env(minishell->envp);
+	print_env_vars(*minishell->env_vars);
 	if (argc == 1)
 		interactive_mode(minishell);
 	else
 		non_interactive_mode(minishell, argv[1]);
-	return (minishell->exit_code);
+	exit_code = minishell->exit_code;
+	free_minishell(minishell);
+	return (exit_code);
 }
 
 static void	interactive_mode(t_minishell *ms)
@@ -35,6 +40,7 @@ static void	interactive_mode(t_minishell *ms)
 					create_fake_cmd6(ms);
 				)
 				restore_std_io(false, false);
+				reset_minishell(ms);
 			}
 		}
 		if (line)
@@ -62,6 +68,7 @@ static void	non_interactive_mode(t_minishell *ms, char *bash_file)
 				create_fake_cmd4(ms);
 			)
 			restore_std_io(false, false);
+			reset_minishell(ms);
 		}
 		free(line);
 	}

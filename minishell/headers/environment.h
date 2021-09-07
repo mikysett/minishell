@@ -1,6 +1,21 @@
 #ifndef ENVIRONMENT_H
 # define ENVIRONMENT_H
 
-char	**get_envp(void);
+// ENV_ACCESSORS
+char	*get_env_var_value(t_list *env_vars, char *key);
+void	set_env_var(t_list **env_vars, t_list *new_var_lst);
+bool	unset_env_var(t_list **env_vars, char *key);
+
+// ENV_VARS
+t_list	**init_env_vars(char **envp);
+int		env_key_len(char *str);
+t_list	*save_env_var(char *var_str, int key_len);
+
+// ENVP
+void	save_envp(t_minishell *ms);
+
+// ENV_PRINT
+void	print_env_vars(t_list *env_vars);
+void	print_env(char **envp);
 
 #endif

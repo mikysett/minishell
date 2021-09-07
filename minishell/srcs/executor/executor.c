@@ -49,17 +49,29 @@ int	exec_builtin(t_cmd *cmd)
 		return (cd_builtin(cmd->args));
 	else if (!ft_strncmp("pwd", cmd->name, 4))
 		return (pwd_builtin(cmd->args));
+<<<<<<< HEAD
+=======
+	else if (!ft_strncmp("export", cmd->name, 7))
+		return (export_builtin(cmd->args));
+	else if (!ft_strncmp("unset", cmd->name, 6))
+		return (unset_builtin(cmd->args));
+	else if (!ft_strncmp("env", cmd->name, 4))
+		return (env_builtin(cmd->args));
+	else if (!ft_strncmp("exit", cmd->name, 5))
+		return (exit_builtin(cmd->args));
+>>>>>>> master
 	return (EXIT_SUCCESS);
 }
 
 int	exec_std_cmd(t_cmd *cmd)
 {
-	pid_t	child_pid;
-	int		wstatus;
-	t_minishell	*ms;
+	pid_t				child_pid;
+	int					cmd_exit_status;
+	const t_minishell	*ms = get_minishell(NULL);
 
-	ms = get_minishell(NULL);
 	cmd->full_path = set_cmd_path(cmd->name, ms->paths);
+	if (!cmd->full_path)
+		return (EXIT_CMD_NOT_FOUND);
 	child_pid = fork();
 	if (child_pid == -1)
 	{
@@ -71,16 +83,16 @@ int	exec_std_cmd(t_cmd *cmd)
 		if (execve(cmd->full_path, cmd->args, ms->envp) == -1)
 		{
 			perror(cmd->name);
-			return (EXIT_FAILURE); // return 127 as special error? (check man)
+			exit(EXIT_CMD_NOT_EXEC);
 		}
 	}
-	else if (wait(&wstatus) == -1)
+	else if (waitpid(child_pid, &cmd_exit_status, 0) == -1)
 	{
 		perror(ms->prog_name);
 		return (EXIT_FAILURE);
 	}
 	DEBUG(fprintf(stderr, "cmd executed\n");)
-	return (EXIT_SUCCESS);
+	return (cmd_exit_status);
 }
 
 char	*set_cmd_path(char *cmd_name, char **paths)
@@ -110,6 +122,6 @@ char	*set_cmd_path(char *cmd_name, char **paths)
 			i++;
 		}
 	}
-	return (ft_strdup(cmd_name));
+	return (NULL);
 }
 

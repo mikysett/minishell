@@ -11,11 +11,21 @@
 # define CLR_PURPLE	"\033[0;35m"
 # define CLR_CYAN	"\033[0;36m"
 
+# define EXIT_INCORRECT_USAGE	2
+# define EXIT_CMD_NOT_EXEC		126
+# define EXIT_CMD_NOT_FOUND		127
 typedef enum e_pipe_side
 {
 	PIPE_READ = 0,
 	PIPE_WRITE = 1
 }				t_pipe_side;
+
+typedef struct	s_env_var
+{
+	char	*key;
+	char	*value;
+	bool	is_printed;
+}				t_env_var;
 
 typedef enum e_token_type
 {
@@ -51,7 +61,6 @@ typedef enum e_prog_state
 typedef struct s_token
 {
 	t_token_type	type;
-	t_quote_type	quote_type;
 	char			*str;
 }				t_token;
 
@@ -117,6 +126,7 @@ typedef struct s_minishell
 	t_std_io	streams;
 
 	char	**envp;
+	t_list	**env_vars;
 	char	**paths;
 
 	int		exit_code;

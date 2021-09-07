@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-static	void print_quote_type(t_quote_type q_type);
-
 void	print_tokens(t_list **tokens)
 {
 	t_list	*curr;
@@ -13,24 +11,24 @@ void	print_tokens(t_list **tokens)
 	{
 		token = (t_token *)curr->content;
 		printf("%s<%s", CLR_GRAY, CLR_WHITE);
-		print_quote_type(token->quote_type);
+		// print_quote_type(token->quote_type);
 		if (token->type == OPERATOR)
 			printf("%s", CLR_PURPLE);
 		printf("%s", token->str);
-		print_quote_type(token->quote_type);
+		// print_quote_type(token->quote_type);
 		printf("%s>%s ", CLR_GRAY, CLR_WHITE);
 		curr = curr->next;
 	}
 	printf("\n");
 }
 
-static	void print_quote_type(t_quote_type q_type)
-{
-	if (q_type == SINGLE_QUOTES)
-		printf("%s'%s", CLR_YELLOW, CLR_WHITE);
-	else if (q_type == DOUBLE_QUOTES)
-		printf("%s\"%s", CLR_GREEN, CLR_WHITE);
-}
+// static	void print_quote_type(t_quote_type q_type)
+// {
+// 	if (q_type == SINGLE_QUOTES)
+// 		printf("%s'%s", CLR_YELLOW, CLR_WHITE);
+// 	else if (q_type == DOUBLE_QUOTES)
+// 		printf("%s\"%s", CLR_GREEN, CLR_WHITE);
+// }
 
 void	print_instructions(t_list **instr)
 {
@@ -416,9 +414,15 @@ void	create_fake_cmd6(t_minishell *ms)
 	t_redirect fake_redir1;
 	t_redirect fake_redir2;
 
+<<<<<<< HEAD
 	t_instruction	fake_instr1;
 
 	t_cmd			fake_cmd1;
+=======
+	t_instruction	*fake_instr1;
+
+	t_cmd			*fake_cmd1;
+>>>>>>> master
 
 	ms->instructions = malloc(sizeof(t_instruction *));
 	ms->redirect = malloc(sizeof(t_redirect *));
@@ -439,6 +443,7 @@ void	create_fake_cmd6(t_minishell *ms)
 
 	*(ms->instructions) = NULL;
 
+<<<<<<< HEAD
 	fake_instr1.type = INSTR_CMD;
 	fake_cmd1.args = ft_split("pwd", ' ');
 	fake_cmd1.id = 0;
@@ -447,10 +452,26 @@ void	create_fake_cmd6(t_minishell *ms)
 	fake_cmd1.name = ft_strdup("pwd");
 	fake_instr1.cmd = &fake_cmd1;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr1));
+=======
+	fake_instr1 = malloc(sizeof(t_instruction));
+	fake_instr1->type = INSTR_CMD;
+	fake_cmd1 = malloc(sizeof(t_cmd));
+	fake_cmd1->args = ft_split("pwd", ' ');
+	fake_cmd1->id = 0;
+	fake_cmd1->group = 0;
+	fake_cmd1->is_builtin = false;
+	fake_cmd1->name = ft_strdup("pwd");
+	fake_instr1->cmd = fake_cmd1;
+	ft_lstadd_back(ms->instructions, ft_lstnew(fake_instr1));
+>>>>>>> master
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
 	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+<<<<<<< HEAD
 }
 
 // <filein1 cat < filein2 | tail | wc -l > out2
+=======
+}
+>>>>>>> master

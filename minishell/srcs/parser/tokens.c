@@ -1,22 +1,17 @@
 #include "minishell.h"
 
 static char	*get_token_operator_end(char *str);
-static char	*get_token_word_end(char *str, t_quote_type quote_type);
-
-t_token_type	get_token_type(char *token_start)
-{
-	if (is_operator(token_start))
-		return (OPERATOR);
-	else
-		return (WORD);
-}
+static char	*get_token_word_end(char *str);
+static t_quote_type	get_quote_type(char c);
+static void	set_quote_status(t_quote_type *prev_qt, t_quote_type new_qt,
+	bool *open_quote);
 
 char	*get_token_end(char *str, t_token *token)
 {
 	if (token->type == OPERATOR)
 		return (get_token_operator_end(str));
 	else
-		return (get_token_word_end(str, token->quote_type));
+		return (get_token_word_end(str));
 }
 
 static char	*get_token_operator_end(char *str)
@@ -31,22 +26,22 @@ static char	*get_token_operator_end(char *str)
 		return (str + 1);
 }
 
-static char	*get_token_word_end(char *str, t_quote_type quote_type)
+static char	*get_token_word_end(char *str)
 {
-	if (quote_type == NO_QUOTING)
-		while (*str
-			&& *str != ' ' && *str != '\t'
-			&& !is_operator(str))
-			str++;
-	else if (quote_type == SINGLE_QUOTES)
-		while (*str
-			&& *str != '\'')
-			str++;
-	else if (quote_type == DOUBLE_QUOTES)
-		while (*str
-			&& *str != '"')
-			str++;
-	if (!*str && quote_type != NO_QUOTING)
+	t_quote_type	prev_qt;
+	bool			open_quote;
+
+	prev_qt = NO_QUOTING;
+	open_quote = false;
+	while (*str)
+	{
+		set_quote_status(&prev_qt, get_quote_type(*str), &open_quote);
+		if (prev_qt == NO_QUOTING
+			&& (*str == ' ' || *str == '\t' || is_operator(str)))
+			return (str);
+		str++;
+	}
+	if (!*str && open_quote == true)
 	{
 		print_err(WRONG_QUOTING);
 		prog_state(PARSER_ERROR);
@@ -54,12 +49,27 @@ static char	*get_token_word_end(char *str, t_quote_type quote_type)
 	return (str);
 }
 
-void	save_token(t_list **tokens, t_token *curr_token)
+static t_quote_type	get_quote_type(char c)
 {
-	t_list	*new_lst_el;
+	if (c == '\'')
+		return (SINGLE_QUOTES);
+	else if (c == '"')
+		return (DOUBLE_QUOTES);
+	else
+		return (NO_QUOTING);
+}
 
-	new_lst_el = ft_lstnew(curr_token);
-	if (!new_lst_el)
-		ft_error_exit(MEMORY_FAIL);
-	ft_lstadd_back(tokens, new_lst_el);
+static void	set_quote_status(t_quote_type *prev_qt, t_quote_type new_qt,
+	bool *open_quote)
+{
+	if (*prev_qt == NO_QUOTING && new_qt != NO_QUOTING)
+	{
+		*prev_qt = new_qt;
+		*open_quote = true;
+	}
+	else if (*prev_qt != NO_QUOTING && *prev_qt == new_qt)
+	{
+		*prev_qt = NO_QUOTING;
+		*open_quote = false;
+	}
 }
