@@ -6,7 +6,7 @@ void	print_tokens(t_list **tokens)
 	t_token	*token;
 
 	curr = *tokens;
-	printf("--> TOKENS\n");
+	printf("%s\t\t--> TOKENS\n%s", CLR_GREEN, CLR_WHITE);
 	while (curr)
 	{
 		token = (t_token *)curr->content;
@@ -43,7 +43,7 @@ void	print_instructions(t_list **instr)
 		};
 
 	curr = *instr;
-	printf("--> INSTRUCTIONS <--\n");
+	printf("%s\t\t--> INSTRUCTIONS <--\n%s", CLR_GREEN, CLR_WHITE);
 	while (curr)
 	{
 		instruction = (t_instruction *)curr->content;
@@ -83,7 +83,7 @@ void	print_redirections(t_list **redir)
 		};
 
 	curr = *redir;
-	printf("--> REDIRECTIONS <--\n");
+	printf("%s\t\t--> REDIRECTIONS <--\n%s", CLR_GREEN, CLR_WHITE);
 	while (curr)
 	{
 		curr_redir = (t_redirect *)curr->content;
@@ -116,7 +116,6 @@ void	create_fake_cmd0(t_minishell *ms)
 	fake_instr1.type = INSTR_CMD;
 	fake_cmd1.args = ft_split("cat filein1", ' ');
 	fake_cmd1.id = 0;
-	fake_cmd1.is_builtin = false;
 	fake_cmd1.name = ft_strdup("cat");
 	fake_instr1.cmd = &fake_cmd1;
 	*(ms->instructions) = ft_lstnew(&fake_instr1);
@@ -156,7 +155,6 @@ void	create_fake_cmd1(t_minishell *ms)
 	fake_instr1.type = INSTR_CMD;
 	fake_cmd1.args = ft_split("cat filein1", ' ');
 	fake_cmd1.id = 0;
-	fake_cmd1.is_builtin = false;
 	fake_cmd1.name = ft_strdup("cat");
 	fake_instr1.cmd = &fake_cmd1;
 	*(ms->instructions) = ft_lstnew(&fake_instr1);
@@ -164,7 +162,6 @@ void	create_fake_cmd1(t_minishell *ms)
 	fake_instr2.type = INSTR_CMD;
 	fake_cmd2.args = ft_split("wc", ' ');
 	fake_cmd2.id = 1;
-	fake_cmd2.is_builtin = false;
 	fake_cmd2.name = ft_strdup("wc");
 	fake_instr2.cmd = &fake_cmd2;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr2));
@@ -207,7 +204,6 @@ void	create_fake_cmd2(t_minishell *ms)
 	fake_cmd1.args = ft_split("wc -l", ' ');
 	fake_cmd1.id = 0;
 	fake_cmd1.group = 0;
-	fake_cmd1.is_builtin = false;
 	fake_cmd1.name = ft_strdup("wc");
 	fake_instr1.cmd = &fake_cmd1;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr1));
@@ -263,7 +259,6 @@ void	create_fake_cmd3(t_minishell *ms)
 	fake_cmd1.args = ft_split("cat", ' ');
 	fake_cmd1.id = 0;
 	fake_cmd1.group = 0;
-	fake_cmd1.is_builtin = false;
 	fake_cmd1.name = ft_strdup("cat");
 	fake_instr1.cmd = &fake_cmd1;
 	*(ms->instructions) = ft_lstnew(&fake_instr1);
@@ -272,7 +267,6 @@ void	create_fake_cmd3(t_minishell *ms)
 	fake_cmd2.args = ft_split("wc -l", ' ');
 	fake_cmd2.id = 1;
 	fake_cmd2.group = 0;
-	fake_cmd2.is_builtin = false;
 	fake_cmd2.name = ft_strdup("wc");
 	fake_instr2.cmd = &fake_cmd2;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr2));
@@ -343,7 +337,6 @@ void	create_fake_cmd4(t_minishell *ms)
 	fake_cmd1.args = ft_split("cat", ' ');
 	fake_cmd1.id = 0;
 	fake_cmd1.group = 0;
-	fake_cmd1.is_builtin = false;
 	fake_cmd1.name = ft_strdup("cat");
 	fake_instr1.cmd = &fake_cmd1;
 	*(ms->instructions) = ft_lstnew(&fake_instr1);
@@ -352,7 +345,6 @@ void	create_fake_cmd4(t_minishell *ms)
 	fake_cmd2.args = ft_split("tail", ' ');
 	fake_cmd2.id = 1;
 	fake_cmd2.group = 0;
-	fake_cmd2.is_builtin = false;
 	fake_cmd2.name = ft_strdup("tail");
 	fake_instr2.cmd = &fake_cmd2;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr2));
@@ -361,7 +353,6 @@ void	create_fake_cmd4(t_minishell *ms)
 	fake_cmd3.args = ft_split("wc -l", ' ');
 	fake_cmd3.id = 2;
 	fake_cmd3.group = 0;
-	fake_cmd3.is_builtin = false;
 	fake_cmd3.name = ft_strdup("wc");
 	fake_instr3.cmd = &fake_cmd3;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr3));
@@ -398,7 +389,6 @@ void	create_fake_cmd5(t_minishell *ms)
 	fake_cmd1.args = ft_split("wc -l", ' ');
 	fake_cmd1.id = 0;
 	fake_cmd1.group = 0;
-	fake_cmd1.is_builtin = false;
 	fake_cmd1.name = ft_strdup("wc");
 	fake_instr1.cmd = &fake_cmd1;
 	ft_lstadd_back(ms->instructions, ft_lstnew(&fake_instr1));
@@ -443,7 +433,6 @@ void	create_fake_cmd6(t_minishell *ms)
 	fake_cmd1->args = ft_split("pwd", ' ');
 	fake_cmd1->id = 0;
 	fake_cmd1->group = 0;
-	fake_cmd1->is_builtin = false;
 	fake_cmd1->name = ft_strdup("pwd");
 	fake_instr1->cmd = fake_cmd1;
 	ft_lstadd_back(ms->instructions, ft_lstnew(fake_instr1));

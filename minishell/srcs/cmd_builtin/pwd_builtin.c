@@ -2,15 +2,9 @@
 
 int	pwd_builtin(char **argv)
 {
-	const int	args_nb = args_count(argv);
-	char		*absolute_path;
+	char	*absolute_path;
 
 	absolute_path = NULL;
-	if (args_nb != 1)
-	{
-		ft_putstr_fd("pwd: too many arguments\n", STDERR_FILENO);
-		return (EXIT_FAILURE);
-	}
 	getcwd(absolute_path, 0);
 	if (!absolute_path)
 	{

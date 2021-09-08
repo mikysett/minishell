@@ -2,9 +2,10 @@
 # define ENVIRONMENT_H
 
 // ENV_ACCESSORS
-char	*get_env_var_value(t_list *env_vars, char *key);
-void	set_env_var(t_list **env_vars, t_list *new_var_lst);
-bool	unset_env_var(t_list **env_vars, char *key);
+t_env_var	*get_env_var(t_list *env_vars, char *key);
+char		*get_env_var_value(t_list *env_vars, char *key);
+bool		set_env_var(t_list **env_vars, t_list *new_var_lst);
+bool		unset_env_var(t_list **env_vars, char *key);
 
 // ENV_VARS
 t_list	**init_env_vars(char **envp);

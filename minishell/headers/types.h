@@ -14,6 +14,7 @@
 # define EXIT_INCORRECT_USAGE	2
 # define EXIT_CMD_NOT_EXEC		126
 # define EXIT_CMD_NOT_FOUND		127
+
 typedef enum e_pipe_side
 {
 	PIPE_READ = 0,
@@ -71,7 +72,6 @@ typedef struct s_cmd
 	char	*name;
 	char	*full_path;
 	char	**args;
-	bool	is_builtin;			// if better can be implemented in executor
 }				t_cmd;
 
 typedef enum e_redir_type

@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 static int	add_env_vars(t_minishell *ms, int args_nb, char **argv);
-static bool	add_sgl_env_var(t_minishell *ms, char *var_str);
+static int	add_sgl_env_var(t_minishell *ms, char *var_str);
 
 int	export_builtin(char **argv)
 {
@@ -20,18 +20,20 @@ int	export_builtin(char **argv)
 
 static int	add_env_vars(t_minishell *ms, int args_nb, char **argv)
 {
-	int			exit_code;
-	bool		vars_changed;
-	int			i;
+	int		exit_code;
+	bool	vars_changed;
+	int		add_sgl_result;
+	int		i;
 
 	vars_changed = false;
 	exit_code = EXIT_SUCCESS;
 	i = 1;
 	while (i < args_nb)
 	{
-		if (!add_sgl_env_var(ms, argv[i]))
+		add_sgl_result = add_sgl_env_var(ms, argv[i]);
+		if (add_sgl_result == -1)
 			exit_code = EXIT_FAILURE;
-		else
+		else if (add_sgl_result == 1)
 			vars_changed = true;
 		i++;
 	}
@@ -40,7 +42,7 @@ static int	add_env_vars(t_minishell *ms, int args_nb, char **argv)
 	return (exit_code);
 }
 
-static bool	add_sgl_env_var(t_minishell *ms, char *var_str)
+static int	add_sgl_env_var(t_minishell *ms, char *var_str)
 {
 	t_list		*new_env_var_lst;
 	t_env_var	*new_env_var;
@@ -51,11 +53,13 @@ static bool	add_sgl_env_var(t_minishell *ms, char *var_str)
 	{
 		print_identifier_error(ms->prog_name, "export", var_str);
 		ft_lstdelone(new_env_var_lst, del_env_var);
-		return (false);
+		return (-1);
 	}
 	else
 	{
-		ft_lstadd_front(ms->env_vars, new_env_var_lst);
-		return (true);
+		if (set_env_var(ms->env_vars, new_env_var_lst) == true)
+			return (1);
+		else
+			return (0);
 	}
 }

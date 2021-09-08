@@ -9,7 +9,7 @@ int	main(int argc, char **argv, char **envp)
 	t_minishell	*minishell;
 	int			exit_code;
 
-	minishell = init_minishell(argv[0], envp);
+	minishell = init_minishell(envp);
 	if (argc == 1)
 		interactive_mode(minishell);
 	else

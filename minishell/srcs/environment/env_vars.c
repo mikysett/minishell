@@ -13,11 +13,10 @@ t_list	**init_env_vars(char **envp)
 	while (envp[++i])
 	{
 		curr_key_len = env_key_len(envp[i]);
-		if (!strncmp("OLDPWD=", envp[i], curr_key_len + 1))
-			continue ;
 		ft_lstadd_back(env_vars, save_env_var(envp[i], curr_key_len));
 	}
-	ft_lstadd_back(env_vars, save_env_var("OLDPWD", 6));
+	if (!get_env_var(*env_vars, "OLDPWD"))
+		ft_lstadd_back(env_vars, save_env_var("OLDPWD", 6));
 	return (env_vars);
 }
 

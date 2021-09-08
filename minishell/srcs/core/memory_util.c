@@ -1,12 +1,14 @@
 #include "minishell.h"
 
-t_minishell	*init_minishell(char *prog_name, char **envp)
+t_minishell	*init_minishell(char **envp)
 {
 	t_minishell	*minishell;
 
 	minishell = calloc_or_exit(1, sizeof(t_minishell));
 	get_minishell(minishell);
-	minishell->prog_name = prog_name;
+	minishell->prog_name = ft_strdup("bash");
+	if (!minishell->prog_name)
+		ft_error_exit(MEMORY_FAIL);
 	minishell->env_vars = init_env_vars(envp);
 	save_envp(minishell);
 	minishell->paths = ft_set_paths(envp);

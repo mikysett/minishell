@@ -1,6 +1,24 @@
 #include "minishell.h"
 
-static void	update_env_var(t_env_var *old_var, t_env_var *new_var);
+static bool	update_env_var(t_env_var *old_var, t_env_var *new_var,
+	t_list *env_var_lst);
+
+t_env_var	*get_env_var(t_list *env_vars, char *key)
+{
+	t_env_var	*curr_var;
+	const int	key_size = ft_strlen(key) + 1;
+
+	if (!key || !env_vars)
+		return (NULL);
+	while (env_vars)
+	{
+		curr_var = (t_env_var *)env_vars->content;
+		if (!ft_strncmp(key, curr_var->key, key_size))
+			return (curr_var);
+		env_vars = env_vars->next;
+	}
+	return (NULL);
+}
 
 char	*get_env_var_value(t_list *env_vars, char *key)
 {
@@ -19,7 +37,7 @@ char	*get_env_var_value(t_list *env_vars, char *key)
 	return (NULL);
 }
 
-void	set_env_var(t_list **env_vars, t_list *new_var_lst)
+bool	set_env_var(t_list **env_vars, t_list *new_var_lst)
 {
 	t_env_var	*new_var;
 	t_list		*curr_var;
@@ -33,23 +51,31 @@ void	set_env_var(t_list **env_vars, t_list *new_var_lst)
 	{
 		var_sel = (t_env_var *)curr_var->content;
 		if (!ft_strncmp(var_sel->key, new_var->key, new_var_key_size))
-		{
-			update_env_var(var_sel, new_var);
-			free(new_var_lst);
-			return ;
-		}
+			return (update_env_var(var_sel, new_var, new_var_lst));
 		curr_var = curr_var->next;
 	}
-	ft_lstadd_back(env_vars, new_var_lst);
+	ft_lstadd_front(env_vars, new_var_lst);
+	return (true);
 }
 
-static void	update_env_var(t_env_var *old_var, t_env_var *new_var)
+static bool	update_env_var(t_env_var *old_var, t_env_var *new_var,
+	t_list *new_var_lst)
 {
-	free(new_var->key);
-	if (old_var->value)
-		free(old_var->value);
-	old_var->value = new_var->value;
-	free(new_var);
+	if (new_var->value)
+	{
+		free(new_var->key);
+		if (old_var->value)
+			free(old_var->value);
+		old_var->value = new_var->value;
+		free(new_var);
+		free(new_var_lst);
+		return (true);
+	}
+	else
+	{
+		ft_lstdelone(new_var_lst, del_env_var);
+		return (false);
+	}
 }
 
 bool	unset_env_var(t_list **env_vars, char *key)

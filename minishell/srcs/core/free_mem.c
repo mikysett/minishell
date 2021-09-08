@@ -9,6 +9,7 @@ void	free_minishell(t_minishell *ms)
 		ms->redirect = free_lst(ms->redirect, del_redirect);
 		ms->env_vars = free_lst(ms->env_vars, del_env_var);
 		free_env_and_paths(ms);
+		free(ms->prog_name);
 		free(ms);
 	}
 }
