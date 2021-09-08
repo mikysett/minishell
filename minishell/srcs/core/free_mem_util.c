@@ -54,5 +54,6 @@ void	del_env_var(void *env_var_void)
 			free(env_var->key);
 		if (env_var->value)
 			free(env_var->value);
+		free(env_var);
 	}
 }

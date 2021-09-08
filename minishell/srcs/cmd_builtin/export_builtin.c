@@ -7,11 +7,8 @@ int	export_builtin(char **argv)
 {
 	const int	args_nb = args_count(argv);
 	t_minishell	*ms;
-	int			i;
 
-	fprintf(stderr, "\t\tEXPORT CMD BUILTIN\n");
 	ms = get_minishell(NULL);
-	i = 0;
 	if (args_nb < 2)
 	{
 		print_env_vars(*ms->env_vars);
@@ -29,7 +26,7 @@ static int	add_env_vars(t_minishell *ms, int args_nb, char **argv)
 
 	vars_changed = false;
 	exit_code = EXIT_SUCCESS;
-	i = 0;
+	i = 1;
 	while (i < args_nb)
 	{
 		if (!add_sgl_env_var(ms, argv[i]))
@@ -58,7 +55,7 @@ static bool	add_sgl_env_var(t_minishell *ms, char *var_str)
 	}
 	else
 	{
-		ft_lstadd_back(ms->env_vars, new_env_var_lst);
+		ft_lstadd_front(ms->env_vars, new_env_var_lst);
 		return (true);
 	}
 }

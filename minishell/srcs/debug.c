@@ -411,8 +411,8 @@ void	create_fake_cmd5(t_minishell *ms)
 // echo this is a test
 void	create_fake_cmd6(t_minishell *ms)
 {
-	t_redirect fake_redir1;
-	t_redirect fake_redir2;
+	// t_redirect fake_redir1;
+	// t_redirect fake_redir2;
 
 	t_instruction	*fake_instr1;
 
@@ -423,13 +423,13 @@ void	create_fake_cmd6(t_minishell *ms)
 	*ms->instructions = NULL;
 	*ms->redirect = NULL;
 
-	fake_redir1.cmd_id = 0;
-	fake_redir1.file_name = ft_strdup("filein1");
-	fake_redir1.type = REDIR_IN;
+	// fake_redir1.cmd_id = 0;
+	// fake_redir1.file_name = ft_strdup("filein1");
+	// fake_redir1.type = REDIR_IN;
 
-	fake_redir2.cmd_id = 0;
-	fake_redir2.file_name = ft_strdup("out2");
-	fake_redir2.type = REDIR_OUT;
+	// fake_redir2.cmd_id = 0;
+	// fake_redir2.file_name = ft_strdup("out2");
+	// fake_redir2.type = REDIR_OUT;
 
 	*(ms->redirect) = NULL;
 	// ft_lstadd_back(ms->redirect, ft_lstnew(&fake_redir1));

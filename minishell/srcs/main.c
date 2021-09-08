@@ -26,7 +26,11 @@ static void	interactive_mode(t_minishell *ms)
 	while (1)
 	{
 		prog_state(PROG_OK);
-		line = readline("minishell$ ");
+		DEBUG(
+			char prompt[80];
+			sprintf(prompt, "minishell (%d)$ ", ms->exit_code);
+			line = readline(prompt);
+		)
 		// WORK IN PROGRESS execute the commands
 		if (line && *line)
 		{
@@ -34,7 +38,7 @@ static void	interactive_mode(t_minishell *ms)
 			ms = parser(line, ms);
 			if (prog_state(TAKE_STATE) == PROG_OK)
 			{
-				executor(ms, *ms->instructions, EXIT_SUCCESS);
+				ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
 				// DEBUG(
 				// 	create_fake_cmd6(ms);
 				// )

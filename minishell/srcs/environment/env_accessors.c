@@ -73,6 +73,7 @@ bool	unset_env_var(t_list **env_vars, char *key)
 			ft_lstdelone(curr_var, del_env_var);
 			return (true);
 		}
+		prev_var = curr_var;
 		curr_var = curr_var->next;
 	}
 	return (false);

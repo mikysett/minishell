@@ -4,7 +4,12 @@
 
 // EXECUTOR
 int		executor(t_minishell *ms, t_list *curr, int cmd_exit_code);
-char	*set_cmd_path(char *cmd_name, char **paths);
+
+// EXEC_STD_CMD
+int		exec_std_cmd(t_cmd *cmd);
+
+// SET_CMD_PATH
+char	*set_cmd_path(t_minishell *ms, t_cmd *cmd);
 
 // SETUP_REDIRECT
 bool	setup_redirect(t_std_io *std_io, t_list **redirect, int id);
