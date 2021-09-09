@@ -19,10 +19,23 @@ int	main(int argc, char **argv, char **envp)
 	return (exit_code);
 }
 
+void	clear_line_handler(int signal)
+{
+	if (signal == SIGINT)
+	{
+		rl_replace_line("", true);
+		rl_redisplay();
+	}
+}
+
 static void	interactive_mode(t_minishell *ms)
 {
 	char	*line;
 
+	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
+		perror(ms->prog_name);
+	if (signal(SIGINT, clear_line_handler) == SIG_ERR)
+		perror(ms->prog_name);
 	while (1)
 	{
 		DEBUG(
@@ -30,13 +43,14 @@ static void	interactive_mode(t_minishell *ms)
 			sprintf(prompt, "minishell (%d)$ ", ms->exit_code);
 			line = readline(prompt);
 		)
-		if (line && *line)
+		if (!line)
+			exit_builtin(NULL);
+		if (*line)
 		{
 			add_history(line);
 			process_line(ms, line);
 		}
-		if (line)
-			free(line);
+		free(line);
 		prog_state(PROG_OK);
 	}
 	// rl_clear_history(); // Compatibility issues with mac os
