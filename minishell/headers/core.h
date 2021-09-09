@@ -4,6 +4,7 @@
 // CORE_UTIL
 t_minishell		*get_minishell(t_minishell *minishell);
 t_prog_state	prog_state(t_prog_state set_prog_state);
+char			*strdup_or_exit(char *str);
 void			ft_error_exit(t_err_code err);
 void			print_err(t_err_code err);
 

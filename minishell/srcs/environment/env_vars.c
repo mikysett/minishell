@@ -38,8 +38,10 @@ t_list	*save_env_var(char *var_str, int key_len)
 
 	curr_var = calloc_or_exit(1, sizeof(t_env_var));
 	curr_var->key = ft_strndup(var_str, key_len);
+	if (!curr_var->key)
+		ft_error_exit(MEMORY_FAIL);
 	if (var_str[key_len] == '=')
-		curr_var->value = ft_strdup(var_str + key_len + 1);
+		curr_var->value = strdup_or_exit(var_str + key_len + 1);
 	new_var = ft_lstnew(curr_var);
 	if (!new_var)
 		ft_error_exit(MEMORY_FAIL);

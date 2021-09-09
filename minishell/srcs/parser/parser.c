@@ -82,20 +82,14 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 	length = take_length_of_command(tokens) + 1;
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
-	cmd->name = ft_strdup(((t_token *)tokens->content)->str);
-	if (!cmd->name)
-		ft_error_exit(MEMORY_FAIL);
+	cmd->name = strdup_or_exit(((t_token *)tokens->content)->str);
 	tokens = tokens->next;
 	cmd->args = calloc_or_exit(length, sizeof(char **));
 	i = 0;
-	cmd->args[0] = ft_strdup(cmd->name);
-	if (!cmd->args[0])
-		ft_error_exit(MEMORY_FAIL);
+	cmd->args[0] = strdup_or_exit(cmd->name);
 	while (++i != length - 1)
 	{
-		cmd->args[i] = ft_strdup(((t_token *)tokens->content)->str);
-		if (!cmd->args[i])
-			ft_error_exit(MEMORY_FAIL);
+		cmd->args[i] = strdup_or_exit(((t_token *)tokens->content)->str);
 		tokens = tokens->next;
 	}
 	return (tokens);
@@ -118,9 +112,7 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 		/* TODO this should have its own function */
 		redir = init_instruction(get_minishell(NULL), 4);
 		redir->type = get_redir_type(token);
-		redir->file_name = ft_strdup(((t_token *)next_node->content)->str);
-		if (!redir->file_name)
-			ft_error_exit(MEMORY_FAIL);
+		redir->file_name = strdup_or_exit(((t_token *)next_node->content)->str);
 		redir->cmd_id = cmd_id;
 		return (handle_redir(next_node->next, curr_node->next, cmd_id));
 	}

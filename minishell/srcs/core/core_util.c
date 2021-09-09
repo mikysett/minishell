@@ -29,6 +29,16 @@ void	ft_error_exit(t_err_code err)
 	exit(EXIT_FAILURE);
 }
 
+char	*strdup_or_exit(char *str)
+{
+	char	*new_str;
+
+	new_str = ft_strdup(str);
+	if (!str)
+		ft_error_exit(MEMORY_FAIL);
+	return (new_str);
+}
+
 void	print_err(t_err_code err)
 {
 	// TODO check if err_code is still necessary or if strerror(errno) is enough

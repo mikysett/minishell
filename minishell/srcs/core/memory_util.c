@@ -6,9 +6,7 @@ t_minishell	*init_minishell(char **envp)
 
 	minishell = calloc_or_exit(1, sizeof(t_minishell));
 	get_minishell(minishell);
-	minishell->prog_name = ft_strdup("bash");
-	if (!minishell->prog_name)
-		ft_error_exit(MEMORY_FAIL);
+	minishell->prog_name = strdup_or_exit("bash");
 	minishell->env_vars = init_env_vars(envp);
 	save_envp(minishell);
 	minishell->paths = ft_set_paths(envp);

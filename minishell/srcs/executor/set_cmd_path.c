@@ -65,9 +65,7 @@ static char	*try_custom_path(char *cmd_name)
 	char	*full_path;
 	struct stat statbuf;
 
-	full_path = ft_strdup(cmd_name);
-	if (!full_path)
-		ft_error_exit(MEMORY_FAIL);
+	full_path = strdup_or_exit(cmd_name);
 	if (stat(full_path, &statbuf) == 0)
 		return (full_path);
 	else
