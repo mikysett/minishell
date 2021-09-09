@@ -11,7 +11,7 @@ int	exec_std_cmd(t_cmd *cmd)
 	ms = get_minishell(NULL);
 	cmd->full_path = set_cmd_path(ms, cmd);
 	if (!cmd->full_path)
-		return (EXIT_CMD_NOT_FOUND);
+		return (EXIT_FILE_NOT_FOUND);
 	child_pid = fork();
 	if (child_pid == 0)
 		return (exec_child(ms, cmd));
@@ -31,9 +31,9 @@ static int	exec_child(t_minishell *ms, t_cmd *cmd)
 		ft_putstr_fd(ms->prog_name, STDERR_FILENO);
 		ft_putstr_fd(": ", STDERR_FILENO);
 		perror(cmd->name);
-		exit(EXIT_CMD_NOT_EXEC);
+		exit(EXIT_FILE_NOT_EXEC);
 	}
-	return (EXIT_CMD_NOT_EXEC);
+	return (EXIT_FILE_NOT_EXEC);
 }
 
 static int	exec_parent(pid_t child_pid)

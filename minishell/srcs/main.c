@@ -2,9 +2,9 @@
 
 static void	interactive_mode(t_minishell *minishell);
 static void	non_interactive_mode(t_minishell *minishell, char *bash_file);
+static void	process_line(t_minishell *ms, char *line);
 
 int	main(int argc, char **argv, char **envp)
-// int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*minishell;
 	int			exit_code;
@@ -21,58 +21,66 @@ int	main(int argc, char **argv, char **envp)
 
 static void	interactive_mode(t_minishell *ms)
 {
-	char		*line;
+	char	*line;
 
 	while (1)
 	{
-		prog_state(PROG_OK);
 		DEBUG(
 			char prompt[80];
 			sprintf(prompt, "minishell (%d)$ ", ms->exit_code);
 			line = readline(prompt);
 		)
-		// WORK IN PROGRESS execute the commands
 		if (line && *line)
 		{
 			add_history(line);
-			ms = parser(line, ms);
-			if (prog_state(TAKE_STATE) == PROG_OK)
-			{
-				ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
-				// DEBUG(
-				// 	create_fake_cmd6(ms);
-				// )
-				restore_std_io(false, false);
-				reset_minishell(ms);
-			}
+			process_line(ms, line);
 		}
 		if (line)
 			free(line);
+		prog_state(PROG_OK);
 	}
 	// rl_clear_history(); // Compatibility issues with mac os
 }
 
 static void	non_interactive_mode(t_minishell *ms, char *bash_file)
 {
-	int		bash_file_fd;
-	char	*line;
+	const int	bash_file_fd = ft_init_file_fd(bash_file, O_RDONLY, 0);
+	char		*line;
+	int			line_read_result;
 
-	bash_file_fd = ft_init_file_fd(bash_file, O_RDONLY, 0);
-	if (!bash_file_fd)
+	if (bash_file_fd == -1)
+	{
+		ms->exit_code = EXIT_FILE_NOT_FOUND;
 		return ;
+	}
+	line_read_result = 1;
+	while (line_read_result && prog_state(TAKE_STATE) == PROG_OK)
+	{
+		line_read_result = get_next_line(bash_file_fd, &line);
+		if (line_read_result == -1)
+		{
+			perror(ms->prog_name);
+			ms->exit_code = EXIT_FAILURE;
+			break ;
+		}	
+		process_line(ms, line);
+		free(line);
+	}
+	close(bash_file_fd);
+}
 
-	prog_state(PROG_OK);
-	while (get_next_line(bash_file_fd, &line))
+static void	process_line(t_minishell *ms, char *line)
+{
+	if (line && *line)
 	{
 		ms = parser(line, ms);
 		if (prog_state(TAKE_STATE) == PROG_OK)
 		{
-			DEBUG(
-				create_fake_cmd4(ms);
-			)
+			ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
 			restore_std_io(false, false);
-			reset_minishell(ms);
 		}
-		free(line);
+		else
+			ms->exit_code = EXIT_INCORRECT_USAGE;
+		reset_minishell(ms);
 	}
 }

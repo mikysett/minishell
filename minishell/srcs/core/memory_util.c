@@ -4,6 +4,7 @@ t_minishell	*init_minishell(char **envp)
 {
 	t_minishell	*minishell;
 
+	prog_state(PROG_OK);
 	minishell = calloc_or_exit(1, sizeof(t_minishell));
 	get_minishell(minishell);
 	minishell->prog_name = strdup_or_exit("bash");

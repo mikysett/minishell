@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msessa <mikysett@gmail.com>                +#+  +:+       +#+        */
+/*   By: msessa <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 22:28:06 by msessa            #+#    #+#             */
-/*   Updated: 2021/08/30 20:08:59 by msessa           ###   ########.fr       */
+/*   Updated: 2021/09/09 17:11:15 by msessa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_free_exit(int fd, char *buf[1025], char **line)
+int	ft_free_exit(int fd, char *buf[__FD_SETSIZE + 1], char **line)
 {
 	free(buf[fd]);
 	free(*line);

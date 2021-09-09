@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msessa <mikysett@gmail.com>                +#+  +:+       +#+        */
+/*   By: msessa <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 22:25:06 by msessa            #+#    #+#             */
-/*   Updated: 2021/08/30 20:08:52 by msessa           ###   ########.fr       */
+/*   Updated: 2021/09/09 17:11:00 by msessa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static int	ft_update_buf(char *buf)
 	return (1);
 }
 
-static int	ft_init_vars(int fd, char *buf[1025], char **line)
+static int	ft_init_vars(int fd, char *buf[__FD_SETSIZE + 1], char **line)
 {
 	*line = malloc(sizeof(char) * 1);
 	if (!*line)
@@ -75,7 +75,7 @@ static int	ft_init_vars(int fd, char *buf[1025], char **line)
 	return (1);
 }
 
-static int	ft_update_outputs(int fd, char *buf[1025], char **line)
+static int	ft_update_outputs(int fd, char *buf[__FD_SETSIZE + 1], char **line)
 {
 	if (*buf[fd] != '\0')
 	{
@@ -94,11 +94,11 @@ static int	ft_update_outputs(int fd, char *buf[1025], char **line)
 
 int	get_next_line(int fd, char **line)
 {
-	static char	*buf[1025] = {0};
+	static char	*buf[__FD_SETSIZE + 1] = {0};
 	int			read_out;
 	int			update;
 
-	if (!BUFFER_SIZE || !line || fd < 0 || fd > 1024
+	if (!BUFFER_SIZE || !line || fd < 0 || fd > __FD_SETSIZE
 		|| !ft_init_vars(fd, buf, line))
 		return (-1);
 	while (1)

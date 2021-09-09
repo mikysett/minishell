@@ -36,6 +36,10 @@ int	ft_init_file_fd(char *file, int oflag, int chmod)
 	else
 		file_fd = open(file, oflag);
 	if (file_fd == -1)
+	{
+		ft_putstr_fd(get_minishell(NULL)->prog_name, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
 		perror(file);
+	}
 	return (file_fd);
 }
