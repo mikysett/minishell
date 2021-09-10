@@ -23,7 +23,7 @@ void	ft_error_exit(t_err_code err)
 	t_minishell	*ms;
 
 	ms = get_minishell(NULL);
-	print_err(err);
+	print_err(ms->prog_name, err);
 	if (ms)
 		free_minishell(ms);
 	exit(EXIT_FAILURE);
@@ -39,10 +39,12 @@ char	*strdup_or_exit(char *str)
 	return (new_str);
 }
 
-void	print_err(t_err_code err)
+void	print_err(char *prog_name, t_err_code err)
 {
-	// TODO check if err_code is still necessary or if strerror(errno) is enough
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (err == ERR_NO_PRINT)
+		return ;
+	ft_putstr_fd(prog_name, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
 	if (err == MEMORY_FAIL)
 		ft_putstr_fd(strerror(errno), STDERR_FILENO);
 	else if (err == WRONG_QUOTING)

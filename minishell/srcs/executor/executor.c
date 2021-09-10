@@ -6,9 +6,11 @@ static int	exec_cmd(t_cmd *cmd);
 int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 {
 	t_instruction	*instr;
-	const int		curr_group = ((t_instruction *)curr->content)->cmd->group;
+	int				curr_group;
 	t_std_io		*std_io;
 
+	if (curr)
+		curr_group = ((t_instruction *)curr->content)->cmd->group;
 	std_io = &ms->streams;
 	while (curr)
 	{
@@ -17,9 +19,8 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 			return (executor(ms, curr, cmd_exit_code));
 		else if (instr->type == INSTR_CMD)
 			cmd_exit_code = exec_instr(instr->cmd, std_io, ms->redirect);
-		else if (instr->type == INSTR_OR && cmd_exit_code == EXIT_SUCCESS)
-			return (cmd_exit_code);
-		else if (instr->type == INSTR_AND && cmd_exit_code != EXIT_SUCCESS)
+		else if ((instr->type == INSTR_OR && cmd_exit_code == EXIT_SUCCESS)
+			|| (instr->type == INSTR_AND && cmd_exit_code != EXIT_SUCCESS))
 			return (cmd_exit_code);
 		curr = curr->next;
 	}

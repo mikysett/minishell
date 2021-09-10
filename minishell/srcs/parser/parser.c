@@ -15,6 +15,8 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 	minishell->instructions = calloc_or_exit(1, sizeof(t_list *));
 	minishell->redirect = calloc_or_exit(1, sizeof(t_list *));
 	minishell->tokens = lexer(line, minishell->tokens);
+	if (!*minishell->tokens)
+		return (minishell);
 	if (prog_state(TAKE_STATE) == PROG_OK)
 		interprets_tokens(*minishell->tokens, 0, 0);
 	DEBUG(print_tokens(minishell->tokens);)

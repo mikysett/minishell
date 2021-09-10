@@ -11,9 +11,17 @@
 # define CLR_PURPLE	"\033[0;35m"
 # define CLR_CYAN	"\033[0;36m"
 
+# define MAX_PROMPT_SIZE		80
+
 # define EXIT_INCORRECT_USAGE	2
 # define EXIT_FILE_NOT_EXEC		126
 # define EXIT_FILE_NOT_FOUND	127
+# define EXIT_SIGINT			130
+
+/*
+	SIGINT		Ctrl+C
+	SIGQUIT		Ctrl+\
+*/
 
 typedef enum e_pipe_side
 {
@@ -48,6 +56,7 @@ typedef enum e_quote_type
 
 typedef enum e_err_code
 {
+	ERR_NO_PRINT,
 	MEMORY_FAIL,
 	WRONG_QUOTING
 }				t_err_code;
@@ -55,6 +64,7 @@ typedef enum e_err_code
 typedef enum e_prog_state
 {
 	TAKE_STATE,
+	SIGINT_RECEIVED,
 	PROG_OK,
 	PARSER_ERROR
 }				t_prog_state;
@@ -118,6 +128,7 @@ typedef struct s_std_io
 typedef struct s_minishell
 {
 	char	*prog_name;
+	char	*prompt; // TODO maybe improve it to more robust extend
 
 	t_list	**instructions;
 	t_list	**redirect;

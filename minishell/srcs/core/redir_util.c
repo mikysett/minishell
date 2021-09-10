@@ -7,11 +7,21 @@ bool	is_redir_in(t_redir_type type)
 	return (false);
 }
 
+int		ft_set_dup(int old_fd)
+{
+	int	new_fd;
+
+	new_fd = dup(old_fd);
+	if (new_fd == -1)
+		perror(get_minishell(NULL)->prog_name);
+	return (new_fd);
+}
+
 bool	ft_set_dup2(int dup_from_fd, int dup_to_fd)
 {
 	if (dup2(dup_from_fd, dup_to_fd) == -1)
 	{
-		perror("minishell");
+		perror(get_minishell(NULL)->prog_name);
 		return (false);
 	}
 	return (true);
@@ -21,7 +31,7 @@ bool	ft_init_pipe_fd(int pipe_fd[2])
 {
 	if (pipe(pipe_fd) == -1)
 	{
-		perror("minishell");
+		perror(get_minishell(NULL)->prog_name);
 		return (false);
 	}
 	return (true);

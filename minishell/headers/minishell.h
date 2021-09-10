@@ -36,6 +36,7 @@
 
 # include "debug.h"
 
+# include "main.h"
 # include "core.h"
 # include "parser.h"
 # include "executor.h"

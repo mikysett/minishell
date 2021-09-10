@@ -7,7 +7,7 @@ t_minishell	*init_minishell(char **envp)
 	prog_state(PROG_OK);
 	minishell = calloc_or_exit(1, sizeof(t_minishell));
 	get_minishell(minishell);
-	minishell->prog_name = strdup_or_exit("bash");
+	minishell->prog_name = strdup_or_exit("minishell");
 	minishell->env_vars = init_env_vars(envp);
 	save_envp(minishell);
 	minishell->paths = ft_set_paths(envp);

@@ -4,7 +4,7 @@ void	save_std_in(t_minishell *ms)
 {
 	if (ms->streams.stdin_saved == false)
 	{
-		ms->streams.stdin_fd = dup(STDIN_FILENO);
+		ms->streams.stdin_fd = ft_set_dup(STDIN_FILENO);
 		DEBUG(fprintf(stderr, "!!!! - SAVE stdin, fd: %d\n", ms->streams.stdin_fd);)
 		if (ms->streams.stdin_fd == -1)
 		{
@@ -18,7 +18,7 @@ void	save_std_out(t_minishell *ms)
 {
 	if (ms->streams.stdout_saved == false)
 	{
-		ms->streams.stdout_fd = dup(STDOUT_FILENO);
+		ms->streams.stdout_fd = ft_set_dup(STDOUT_FILENO);
 		DEBUG(fprintf(stderr, "!!!! - SAVE stdout, fd: %d\n", ms->streams.stdout_fd);)
 		if (ms->streams.stdin_fd == -1)
 		{

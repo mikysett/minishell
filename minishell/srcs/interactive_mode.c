@@ -1,0 +1,79 @@
+#include "minishell.h"
+
+static void	set_signals(t_minishell *ms);
+static void	new_line_handler(int signal);
+static char	*update_prompt(char *prog_name, int exit_code, char separator);
+static void	handle_null_line(t_minishell *ms);
+
+void	interactive_mode(t_minishell *ms)
+{
+	char	*line;
+
+	set_signals(ms);
+	while (1)
+	{
+		ms->prompt = update_prompt(ms->prog_name, ms->exit_code, '$');
+		line = readline(ms->prompt);
+		if (!line)
+			handle_null_line(ms);
+		else if (*line)
+		{
+			add_history(line);
+			process_line(ms, line);
+		}
+		if (line)
+			free(line);
+		prog_state(PROG_OK);
+	}
+	// rl_clear_history(); // Compatibility issues with mac os
+}
+
+static void	set_signals(t_minishell *ms)
+{
+	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
+		perror(ms->prog_name);
+	if (signal(SIGINT, new_line_handler) == SIG_ERR)
+		perror(ms->prog_name);
+}
+
+
+// TODO kill eventual child still to be implemented
+// probably this way to implement the signal create issue when the kill is in a
+// process that has redirections on standard input, further controls must be 
+// done before to redirect anything
+static void	new_line_handler(int signal)
+{
+	t_minishell	*ms;
+
+	ms = get_minishell(NULL);
+	if (signal == SIGINT)
+	{
+		prog_state(SIGINT_RECEIVED);
+		ms->exit_code = EXIT_SIGINT;
+		write(STDIN_FILENO, "\n", 1);
+		ms->streams.stdin_fd = ft_set_dup(STDIN_FILENO);
+		if (ms->streams.stdin_fd == -1)
+			ft_error_exit(ERR_NO_PRINT);
+		close(STDIN_FILENO);
+	}
+}
+
+// TODO this function should be heavely refactored
+static char	*update_prompt(char *prog_name, int exit_code, char separator)
+{
+	static char	prompt[MAX_PROMPT_SIZE];
+
+	sprintf(prompt, "%s (%d)%c ", prog_name, exit_code, separator);
+	return (prompt);
+}
+
+static void	handle_null_line(t_minishell *ms)
+{
+	if (prog_state(TAKE_STATE) == SIGINT_RECEIVED)
+	{
+		ft_set_dup2(ms->streams.stdin_fd, STDIN_FILENO);
+		close(ms->streams.stdin_fd);
+	}
+	else
+		exit_builtin(NULL);
+}

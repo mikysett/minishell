@@ -43,7 +43,7 @@ static char	*get_token_word_end(char *str)
 	}
 	if (!*str && open_quote == true)
 	{
-		print_err(WRONG_QUOTING);
+		print_err(get_minishell(NULL)->prog_name, WRONG_QUOTING);
 		prog_state(PARSER_ERROR);
 	}
 	return (str);

@@ -43,7 +43,7 @@ static bool	set_here_doc(t_std_io *std_io, char *limiter)
 	if (close(here_doc_pipe[PIPE_WRITE]) == -1
 		|| ft_set_dup2(here_doc_pipe[PIPE_READ], STDIN_FILENO) == false)
 	{
-		perror("minishell");
+		perror(get_minishell(NULL)->prog_name);
 		return (false);
 	}
 	set_curr_in(std_io, here_doc_pipe[PIPE_READ]);
