@@ -47,6 +47,8 @@ static int	exec_parent(pid_t child_pid)
 	}
 	if (WIFEXITED(cmd_exit_status))
 		return (WEXITSTATUS(cmd_exit_status));
+	else if (WIFSIGNALED(cmd_exit_status))
+		return (128 + WTERMSIG(cmd_exit_status));
 	// TODO this last exit code is not doublecheckded
 	else
 		return (EXIT_FAILURE);

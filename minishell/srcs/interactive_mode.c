@@ -10,10 +10,13 @@ void	interactive_mode(t_minishell *ms)
 	char	*line;
 
 	set_signals(ms);
+	prog_state(PROG_READ);
 	while (1)
 	{
 		ms->prompt = update_prompt(ms->prog_name, ms->exit_code, '$');
 		line = readline(ms->prompt);
+		if (prog_state(TAKE_STATE) == PROG_READ)
+			prog_state(PROG_OK);
 		if (!line)
 			handle_null_line(ms);
 		else if (*line)
@@ -23,7 +26,7 @@ void	interactive_mode(t_minishell *ms)
 		}
 		if (line)
 			free(line);
-		prog_state(PROG_OK);
+		prog_state(PROG_READ);
 	}
 	// rl_clear_history(); // Compatibility issues with mac os
 }
@@ -36,21 +39,17 @@ static void	set_signals(t_minishell *ms)
 		perror(ms->prog_name);
 }
 
-
-// TODO kill eventual child still to be implemented
-// probably this way to implement the signal create issue when the kill is in a
-// process that has redirections on standard input, further controls must be 
-// done before to redirect anything
 static void	new_line_handler(int signal)
 {
-	t_minishell	*ms;
+	t_minishell			*ms;
+	const t_prog_state	old_state = prog_state(TAKE_STATE);
 
 	ms = get_minishell(NULL);
-	if (signal == SIGINT)
+	ms->exit_code = EXIT_SIGINT;
+	prog_state(SIGINT_RECEIVED);
+	write(STDIN_FILENO, "\n", 1); // TODO check if this works when there is stdin redirect
+	if (signal == SIGINT && old_state == PROG_READ)
 	{
-		prog_state(SIGINT_RECEIVED);
-		ms->exit_code = EXIT_SIGINT;
-		write(STDIN_FILENO, "\n", 1);
 		ms->streams.stdin_fd = ft_set_dup(STDIN_FILENO);
 		if (ms->streams.stdin_fd == -1)
 			ft_error_exit(ERR_NO_PRINT);

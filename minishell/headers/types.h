@@ -66,6 +66,7 @@ typedef enum e_prog_state
 	TAKE_STATE,
 	SIGINT_RECEIVED,
 	PROG_OK,
+	PROG_READ,
 	PARSER_ERROR
 }				t_prog_state;
 

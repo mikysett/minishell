@@ -23,6 +23,8 @@ int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
 			|| (instr->type == INSTR_AND && cmd_exit_code != EXIT_SUCCESS))
 			return (cmd_exit_code);
 		curr = curr->next;
+		if (prog_state(TAKE_STATE) != PROG_OK)
+			break ;
 	}
 	return (cmd_exit_code);
 }
