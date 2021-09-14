@@ -38,7 +38,10 @@ static int	add_env_vars(t_minishell *ms, int args_nb, char **argv)
 		i++;
 	}
 	if (vars_changed)
+	{
 		save_envp(ms);
+		ms->paths = ft_set_paths(ms->envp);
+	}
 	return (exit_code);
 }
 

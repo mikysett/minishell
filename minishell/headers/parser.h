@@ -17,8 +17,8 @@ char			*get_token_end(char *str, t_token *token);
 // PERFORM_EXPANSIONS
 void			perform_expansions(t_list **tokens);
 
-// FILENAME_EXPANSIONS
-void			filename_expansions(t_list **tokens);
+// FILENAME_EXPANSION
+void			filename_expansion(t_list **tokens);
 
 // QUOTE_REMOVAL
 void			quote_removal(t_list *curr_token_lst);

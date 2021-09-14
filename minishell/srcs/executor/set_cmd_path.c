@@ -14,6 +14,7 @@ char	*set_cmd_path(t_minishell *ms, t_cmd *cmd)
 		full_path = try_custom_path(cmd->name);
 	if (!full_path)
 	{
+		printf("ooook\n");
 		ft_putstr_fd(ms->prog_name, STDERR_FILENO);
 		ft_putstr_fd(": ", STDERR_FILENO);
 		perror(cmd->name);
@@ -38,7 +39,6 @@ static char	*try_default_paths(char **paths, char *cmd_name)
 	int			cmd_path_size;
 	const int	cmd_name_len = ft_strlen(cmd_name);;
 	char		*full_path;
-	struct stat statbuf;
 
 	i = 0;
 	if (!paths)
@@ -54,7 +54,7 @@ static char	*try_default_paths(char **paths, char *cmd_name)
 		ft_strlcat(full_path, paths[i], cmd_path_size);
 		ft_strlcat(full_path, "/", cmd_path_size);
 		ft_strlcat(full_path, cmd_name, cmd_path_size);
-		if (stat(full_path, &statbuf) == 0)
+		if (access(full_path, X_OK) == 0)
 			return (full_path);
 		free(full_path);
 		i++;
@@ -65,10 +65,9 @@ static char	*try_default_paths(char **paths, char *cmd_name)
 static char	*try_custom_path(char *cmd_name)
 {
 	char	*full_path;
-	struct stat statbuf;
 
 	full_path = strdup_or_exit(cmd_name);
-	if (stat(full_path, &statbuf) == 0)
+	if (access(full_path, X_OK) == 0)
 		return (full_path);
 	else
 	{
