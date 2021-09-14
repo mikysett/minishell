@@ -18,9 +18,12 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 	if (!*minishell->tokens)
 		return (minishell);
 	if (prog_state(TAKE_STATE) == PROG_OK)
+	{
+		perform_expansions(minishell->tokens);
 		interprets_tokens(*minishell->tokens, 0, 0);
-	DEBUG(print_tokens(minishell->tokens);)
-	DEBUG(print_instructions(minishell->instructions);)
+		DEBUG(print_tokens(minishell->tokens);)
+		DEBUG(print_instructions(minishell->instructions);)
+	}
 	return (minishell);
 }
 

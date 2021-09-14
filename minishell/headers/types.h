@@ -29,6 +29,15 @@ typedef enum e_pipe_side
 	PIPE_WRITE = 1
 }				t_pipe_side;
 
+typedef enum e_prog_state
+{
+	TAKE_STATE,
+	SIGINT_RECEIVED,
+	PROG_OK,
+	PROG_READ,
+	PARSER_ERROR
+}				t_prog_state;
+
 typedef struct	s_env_var
 {
 	char	*key;
@@ -61,14 +70,6 @@ typedef enum e_err_code
 	WRONG_QUOTING
 }				t_err_code;
 
-typedef enum e_prog_state
-{
-	TAKE_STATE,
-	SIGINT_RECEIVED,
-	PROG_OK,
-	PROG_READ,
-	PARSER_ERROR
-}				t_prog_state;
 
 typedef struct s_token
 {

@@ -1,13 +1,27 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+// PARSER
 t_minishell		*parser(char *line, t_minishell *minishell);
 
 // LEXER
 t_list			**lexer(char *line, t_list **tokens);
 
+// QUOTE_UTIL
+t_quote_type	get_quote_type(char c);
+bool			update_quote_type(t_quote_type curr, t_quote_type *prev);
+
 // TOKENS
 char			*get_token_end(char *str, t_token *token);
+
+// PERFORM_EXPANSIONS
+void			perform_expansions(t_list **tokens);
+
+// FILENAME_EXPANSIONS
+void			filename_expansions(t_list **tokens);
+
+// QUOTE_REMOVAL
+void			quote_removal(t_list *curr_token_lst);
 
 // LEXER_UTILS
 bool			is_operator(char *str);

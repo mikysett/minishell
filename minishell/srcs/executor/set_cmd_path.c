@@ -43,6 +43,8 @@ static char	*try_default_paths(char **paths, char *cmd_name)
 	i = 0;
 	if (!paths)
 		return (NULL);
+	if (cmd_name_len == 0)
+		return (strdup_or_exit(cmd_name));
 	while (paths[i])
 	{
 		cmd_path_size = ft_strlen(paths[i]) + cmd_name_len + 2;
