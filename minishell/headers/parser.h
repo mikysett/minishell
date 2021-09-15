@@ -19,6 +19,8 @@ void			perform_expansions(t_list **tokens);
 
 // FILENAME_EXPANSION
 void			filename_expansion(t_list **tokens);
+void			save_expansion_if_match(t_list **new_tokens, char *d_name,
+					char *token_str);
 
 // QUOTE_REMOVAL
 void			quote_removal(t_list *curr_token_lst);
