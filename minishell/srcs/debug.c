@@ -5,6 +5,8 @@ void	print_tokens(t_list **tokens)
 	t_list	*curr;
 	t_token	*token;
 
+	if (!tokens || !*tokens)
+		return ;
 	curr = *tokens;
 	printf("%s\t\t--> TOKENS\n%s", CLR_GREEN, CLR_WHITE);
 	while (curr)
@@ -42,6 +44,8 @@ void	print_instructions(t_list **instr)
 			"AND"
 		};
 
+	if (!instr || !*instr)
+		return ;
 	curr = *instr;
 	printf("%s\t\t--> INSTRUCTIONS <--\n%s", CLR_GREEN, CLR_WHITE);
 	while (curr)
@@ -49,17 +53,19 @@ void	print_instructions(t_list **instr)
 		instruction = (t_instruction *)curr->content;
 		printf("    %2d: %10s ", i, instr_str[instruction->type]);
 		if (instruction->type == INSTR_CMD)
+		{
 			printf("\tid: %2d group: %2d %-15s ARGS: ",
 				instruction->cmd->id,
 				instruction->cmd->group,
 				instruction->cmd->name);
-		j = 0;
-		if (instruction->cmd->args)
-		{
-			while (instruction->cmd->args[j])
+			j = 0;
+			if (instruction->cmd->args)
 			{
-				printf("%s ", instruction->cmd->args[j]);
-				j++;
+				while (instruction->cmd->args[j])
+				{
+					printf("%s ", instruction->cmd->args[j]);
+					j++;
+				}
 			}
 		}
 		printf("\n");
@@ -82,6 +88,8 @@ void	print_redirections(t_list **redir)
 			"REDIR OUT APPEND"
 		};
 
+	if (!redir || !*redir)
+		return ;
 	curr = *redir;
 	printf("%s\t\t--> REDIRECTIONS <--\n%s", CLR_GREEN, CLR_WHITE);
 	while (curr)
