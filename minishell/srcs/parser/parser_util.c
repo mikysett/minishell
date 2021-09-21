@@ -5,7 +5,7 @@ int		is_redir_op(t_token *token)
 	char *str;
 
 	str = token->str;
-	return (token->type == OPERATOR && 
+	return (token->type == OPERATOR &&
 			(ft_strncmp(str, "<", 1) == 0 || ft_strncmp(str, ">", 1) == 0
 			|| ft_strncmp(str, "<<", 2) == 0 || ft_strncmp(str, ">>", 2) == 0));
 }
@@ -15,7 +15,7 @@ int		is_logic_op(t_token *token)
 	char *str;
 
 	str = token->str;
-	return (token->type == OPERATOR && 
+	return (token->type == OPERATOR &&
 			(ft_strncmp(str, "||", 2) == 0 || ft_strncmp(str, "&&", 2) == 0));
 }
 
@@ -24,7 +24,7 @@ int		is_paren_op(t_token *token)
 	char *str;
 
 	str = token->str;
-	return (token->type == OPERATOR && 
+	return (token->type == OPERATOR &&
 			(ft_strncmp(str, "(", 1) == 0 || ft_strncmp(str, ")", 1) == 0));
 }
 
@@ -60,10 +60,27 @@ int		take_length_of_command(t_list *node)
 	return (i);
 }
 
+/* initiates a redirection outside of the main
+ * handling functions; this ensures allocation is retrievable
+ * in case of failure at the handler function */
+t_redirect	*init_redirection(t_minishell *ms, t_redir_type type)
+{
+	t_redirect		*redir;
+	t_list			*new_redir;
+
+	redir = calloc_or_exit(1, sizeof(t_redirect));
+	new_redir = ft_lstnew(redir);
+	if (!new_redir)
+		ft_error_exit(MEMORY_FAIL);
+	ft_lstadd_back(ms->instructions, new_redir);
+	redir->type = type;
+	return (redir);
+}
+
 /* initiates an instruction outside of the main
  * handling functions; this ensures allocation is retrievable
  * in case of failure at the handler function */
-t_cmd	*init_instruction(t_minishell *ms, t_instr_type type) 
+t_cmd	*init_instruction(t_minishell *ms, t_instr_type type)
 {
 	t_instruction	*instr;
 	t_list			*new_instr;

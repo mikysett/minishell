@@ -115,8 +115,7 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 			return (NULL);
 		}
 		/* TODO this should have its own function */
-		redir = init_instruction(get_minishell(NULL), 4);
-		redir->type = get_redir_type(token);
+		redir = init_redirection(get_minishell(NULL), get_redir_type(token));
 		redir->file_name = strdup_or_exit(((t_token *)next_node->content)->str);
 		redir->cmd_id = cmd_id;
 		return (handle_redir(next_node->next, curr_node->next, cmd_id));

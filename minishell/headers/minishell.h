@@ -7,6 +7,8 @@
 #  define DEBUG(x)
 # endif
 
+# define __FD_SETSIZE 1024
+
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
