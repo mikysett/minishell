@@ -23,6 +23,7 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 		interprets_tokens(*minishell->tokens, 0, 0);
 		DEBUG(print_tokens(minishell->tokens);)
 		DEBUG(print_instructions(minishell->instructions);)
+		DEBUG(print_redirections(minishell->redirect);)
 	}
 	return (minishell);
 }
