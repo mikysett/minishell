@@ -72,7 +72,7 @@ t_redirect	*init_redirection(t_minishell *ms, t_redir_type type)
 	new_redir = ft_lstnew(redir);
 	if (!new_redir)
 		ft_error_exit(MEMORY_FAIL);
-	ft_lstadd_back(ms->instructions, new_redir);
+	ft_lstadd_back(ms->redirect, new_redir);
 	redir->type = type;
 	return (redir);
 }
@@ -80,7 +80,7 @@ t_redirect	*init_redirection(t_minishell *ms, t_redir_type type)
 /* initiates an instruction outside of the main
  * handling functions; this ensures allocation is retrievable
  * in case of failure at the handler function */
-t_cmd	*init_instruction(t_minishell *ms, t_instr_type type)
+t_cmd		*init_instruction(t_minishell *ms, t_instr_type type)
 {
 	t_instruction	*instr;
 	t_list			*new_instr;
