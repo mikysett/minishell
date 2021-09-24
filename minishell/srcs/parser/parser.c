@@ -92,8 +92,9 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 	tokens = tokens->next;
 	cmd->args = calloc_or_exit(length, sizeof(char **));
 	i = 0;
-	cmd->args[0] = strdup_or_exit(cmd->name);
-	while (++i != length - 1)
+	cmd->args[i++] = strdup_or_exit(cmd->name);
+	while (i != length - 1
+			&& (((t_token *)tokens->content)->type == WORD))
 	{
 		cmd->args[i] = strdup_or_exit(((t_token *)tokens->content)->str);
 		tokens = tokens->next;
