@@ -39,7 +39,7 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK)
 		return (NULL);
-	if (curr_token->type == WORD)
+	if (((t_token *)curr_node->content)->type == WORD)
 		curr_node = handle_command(curr_node, cmd_id, cmd_group);
 	/* fix is_logic_op to check type and str */
 	else if (is_logic_op(curr_token))
@@ -96,7 +96,7 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 	while (i != length - 1
 			&& (((t_token *)tokens->content)->type == WORD))
 	{
-		cmd->args[i] = strdup_or_exit(((t_token *)tokens->content)->str);
+		cmd->args[i++] = strdup_or_exit(((t_token *)tokens->content)->str);
 		tokens = tokens->next;
 	}
 	return (tokens);
