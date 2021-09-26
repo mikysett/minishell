@@ -17,7 +17,7 @@ int		is_logic_op(t_token *token)
 
 	str = token->str;
 	return (token->type == OPERATOR &&
-			(ft_strncmp(str, "||", 2) == 0 || ft_strncmp(str, "&&", 2) == 0));
+			(ft_strncmp(str, "||", 3) == 0 || ft_strncmp(str, "&&", 3) == 0));
 }
 
 int		is_paren_op(t_token *token)

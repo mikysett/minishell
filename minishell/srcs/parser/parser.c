@@ -11,16 +11,22 @@ static t_list			*handle_logical_op(t_list *curr_node, int cmd_id);
  * and how to ensure proper comman id when it goes into parens? */
 t_minishell	*parser(char *line, t_minishell *minishell)
 {
+	t_list	*curr_node;
+	int		cmd_id;
+
 	minishell->tokens = calloc_or_exit(1, sizeof(t_list *));
 	minishell->instructions = calloc_or_exit(1, sizeof(t_list *));
 	minishell->redirect = calloc_or_exit(1, sizeof(t_list *));
 	minishell->tokens = lexer(line, minishell->tokens);
 	if (!*minishell->tokens)
 		return (minishell);
+	curr_node = *minishell->tokens;
+	cmd_id = 0;
 	if (prog_state(TAKE_STATE) == PROG_OK)
 	{
 		perform_expansions(minishell->tokens);
-		interprets_tokens(*minishell->tokens, 0, 0);
+		while (curr_node)
+			curr_node = interprets_tokens(curr_node, cmd_id++, 0);
 		DEBUG(print_tokens(minishell->tokens);)
 		DEBUG(print_instructions(minishell->instructions);)
 		DEBUG(print_redirections(minishell->redirect);)
@@ -41,7 +47,6 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 		return (NULL);
 	if (((t_token *)curr_node->content)->type == WORD)
 		curr_node = handle_command(curr_node, cmd_id, cmd_group);
-	/* fix is_logic_op to check type and str */
 	else if (is_logic_op(curr_token))
 		curr_node = handle_logical_op(curr_node, cmd_id);
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0)
@@ -102,11 +107,23 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 	return (tokens);
 }
 
+static	void create_redir(t_token *token, char *file_name, int redir_type, int cmd_id)
+{
+	t_redirect	*redir;
+
+	redir = init_redirection(get_minishell(NULL), get_redir_type(token));
+	redir->type = redir_type;
+	if (file_name)
+		redir->file_name = strdup_or_exit(file_name);
+	else
+		redir->file_name = NULL;
+	redir->cmd_id = cmd_id;
+}
+
 /* the function checks for consecutive redirections */
 static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
 	t_token		*token;
-	t_redirect	*redir;
 
 	if (curr_node)
 	{
@@ -118,15 +135,23 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 				prog_state(PARSER_ERROR);
 				return (NULL);
 			}
-			/* TODO this should have its own function */
-			redir = init_redirection(get_minishell(NULL), get_redir_type(token));
-			redir->file_name = strdup_or_exit(((t_token *)next_node->content)->str);
-			redir->cmd_id = cmd_id;
-			return (handle_redir(next_node->next, curr_node->next, cmd_id));
+			if (ft_strncmp(token->str, "|", 2) == 0)
+			{
+				create_redir(token, NULL, REDIR_PIPE_IN, cmd_id);
+				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id + 1);
+			}
+			else
+				create_redir(NULL, ((t_token *)next_node->content)->str,
+					get_redir_type(token), cmd_id);
+			if (next_node->next && is_redir_op((t_token *)next_node->content))
+				return (handle_redir(next_node->next, curr_node->next, cmd_id));
+			else
+				return (next_node);
 		}
 	}
 	return (curr_node);
 }
+
 
 /* TODO this function can be generalized to accept all tokens,
  * typecasting (if needed) according to instr_type */
