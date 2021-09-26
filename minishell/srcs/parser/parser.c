@@ -141,12 +141,11 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id + 1);
 			}
 			else
-				create_redir(NULL, ((t_token *)next_node->content)->str,
+				create_redir(token, ((t_token *)next_node->content)->str,
 					get_redir_type(token), cmd_id);
 			if (next_node->next && is_redir_op((t_token *)next_node->content))
 				return (handle_redir(next_node->next, curr_node->next, cmd_id));
-			else
-				return (next_node);
+			return (next_node->next);
 		}
 	}
 	return (curr_node);
