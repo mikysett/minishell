@@ -109,6 +109,16 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 }
 
 /* the function checks for consecutive redirections */
+
+/* after a pipe, it is possible to have both a command or a redir.
+*
+* < filein2 | cat				👈 legal
+* < |							❌ not good
+* cat filein2 | > filein3       👈 super legal as well
+* cat filein2 | >				❌ not good
+* < filein2 | > filein3         👈 super legal as well
+*/
+
 static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
 	t_token		*token;
@@ -118,6 +128,10 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 		token = (t_token *)(curr_node->content);
 		if (is_redir_op(token))
 		{
+			/* the conditions below should be a proper function.
+			 * it should test whether the particular situation is legal,
+			 * which will then allow for unrestricted running of if else clauses.
+			 * there are more cases to test! ⚠️  */
 			if (!next_node || ((t_token *)next_node->content)->type != WORD)
 			{
 				prog_state(PARSER_ERROR);
@@ -127,8 +141,8 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 			{
 				create_redir(token, NULL, REDIR_PIPE_IN, cmd_id);
 				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id + 1);
+				token = (t_token *)(curr_node->next->content)
 			}
-			else
 				create_redir(token, ((t_token *)next_node->content)->str,
 					get_redir_type(token), cmd_id);
 			if (next_node->next && is_redir_op((t_token *)next_node->content))
