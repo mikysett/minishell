@@ -5,6 +5,7 @@ static t_list			*handle_command(t_list *tokens, int cmd_id, int cmd_group);
 static void				insert_token_in_list(void *instruction, int instr_type);
 static t_list			*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id);
 static t_list			*handle_logical_op(t_list *curr_node, int cmd_id);
+static void				create_redir(t_token *token, char *file_name, int redir_type, int cmd_id);
 
 /* TODO could there be a while loop over here?
  * loop while prog_state is ok && there are still tokens left?
@@ -107,19 +108,6 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 	return (tokens);
 }
 
-static	void create_redir(t_token *token, char *file_name, int redir_type, int cmd_id)
-{
-	t_redirect	*redir;
-
-	redir = init_redirection(get_minishell(NULL), get_redir_type(token));
-	redir->type = redir_type;
-	if (file_name)
-		redir->file_name = strdup_or_exit(file_name);
-	else
-		redir->file_name = NULL;
-	redir->cmd_id = cmd_id;
-}
-
 /* the function checks for consecutive redirections */
 static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
@@ -130,7 +118,7 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 		token = (t_token *)(curr_node->content);
 		if (is_redir_op(token))
 		{
-			if (!next_node)
+			if (!next_node || ((t_token *)next_node->content)->type != WORD)
 			{
 				prog_state(PARSER_ERROR);
 				return (NULL);
@@ -149,6 +137,19 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 		}
 	}
 	return (curr_node);
+}
+
+static	void create_redir(t_token *token, char *file_name, int redir_type, int cmd_id)
+{
+	t_redirect	*redir;
+
+	redir = init_redirection(get_minishell(NULL), get_redir_type(token));
+	redir->type = redir_type;
+	if (file_name)
+		redir->file_name = strdup_or_exit(file_name);
+	else
+		redir->file_name = NULL;
+	redir->cmd_id = cmd_id;
 }
 
 
