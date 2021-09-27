@@ -139,9 +139,9 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 			}
 			if (ft_strncmp(token->str, "|", 2) == 0)
 			{
-				create_redir(token, NULL, REDIR_PIPE_IN, cmd_id);
-				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id + 1);
-				token = (t_token *)(curr_node->next->content)
+				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id);
+				create_redir(token, NULL, REDIR_PIPE_IN, cmd_id + 1);
+				return (handle_redir(curr_node->next, next_node->next, cmd_id + 1));
 			}
 				create_redir(token, ((t_token *)next_node->content)->str,
 					get_redir_type(token), cmd_id);
