@@ -17,13 +17,13 @@ int	echo_builtin(char **argv)
 	while (++i < args_nb)
 	{
 		if (something_printed)
-			write(STDIN_FILENO, " ", 1);
+			write(STDOUT_FILENO, " ", 1);
 		else
 			something_printed = true;
-		write(STDIN_FILENO, argv[i], ft_strlen(argv[i]));
+		write(STDOUT_FILENO, argv[i], ft_strlen(argv[i]));
 	}
 	if (print_newline)
-		write(STDIN_FILENO, "\n", 1);
+		write(STDOUT_FILENO, "\n", 1);
 	return (EXIT_SUCCESS);
 }
 
