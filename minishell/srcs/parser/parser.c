@@ -2,14 +2,11 @@
 
 static t_list			*interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group);
 static t_list			*handle_command(t_list *tokens, int cmd_id, int cmd_group);
-static void				insert_token_in_list(void *instruction, int instr_type);
+static t_list			*handle_parens(t_list *curr_node, int cmd_id, int cmd_group);
 static t_list			*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id);
 static t_list			*handle_logical_op(t_list *curr_node, int cmd_id);
 static void				create_redir(t_token *token, char *file_name, int redir_type, int cmd_id);
 
-/* TODO could there be a while loop over here?
- * loop while prog_state is ok && there are still tokens left?
- * and how to ensure proper comman id when it goes into parens? */
 t_minishell	*parser(char *line, t_minishell *minishell)
 {
 	t_list	*curr_node;
@@ -36,8 +33,7 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 }
 
 /* always assumes every function call is the first token
- * TODO ensure comparing of ( ) with their types!
- * Legal case: < test-1 | wc !! */
+ * TODO ensure comparing of ( ) with their types! */
 static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 {
 	t_token			*curr_token;
@@ -51,10 +47,7 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	else if (is_logic_op(curr_token))
 		curr_node = handle_logical_op(curr_node, cmd_id);
 	else if (ft_strncmp(curr_token->str, "(", 2) == 0)
-		curr_node = interprets_tokens(curr_node->next, cmd_id + 1, cmd_group + 1);
-	/* this has the be thought of;
-		 * how to handle nesting?
-		 * how to avoid empty parens? */
+		curr_node = handle_parens(curr_node, cmd_id, cmd_group);
 	else if (ft_strncmp(curr_token->str, ")", 2) == 0)
 		;// passing
 	if (curr_node)
@@ -64,7 +57,31 @@ static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	return (curr_node);
 }
 
-/* this seems done, but needs more tools to ensure there is not any silly stuff like && &&, or && || */
+static t_list *handle_parens(t_list *curr_node, int cmd_id, int cmd_group)
+{
+	t_token			*next_token;
+
+	if (curr_node->next)
+	{
+		next_token = (t_token *)curr_node->next;
+		if (ft_strncmp(next_token->str, "|", 2) == 0
+			|| ft_strncmp(next_token->str, ")", 2) == 0)
+		{
+			prog_state(PARSER_ERROR);
+			return (NULL);
+		}
+	}
+	else
+	{
+		prog_state(PARSER_ERROR);
+		return (NULL);
+	}
+	return (interprets_tokens(curr_node->next, cmd_id + 1, 0));
+}
+
+
+/* TODO needs more tools to ensure there is not any silly stuff like && &&, or && ||
+ *		nor that any logical op is without preceding content ("&& cat filein2" should fail) */
 static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
 {
 	t_token		*token;
@@ -81,7 +98,7 @@ static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
 		prog_state(PARSER_ERROR);
 		return (NULL);
 	}
-	return (curr_node->next);
+	return (interprets_tokens(curr_node->next, cmd_id, 0));
 }
 
 static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
@@ -109,15 +126,6 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 }
 
 /* the function checks for consecutive redirections */
-
-/* after a pipe, it is possible to have both a command or a redir.
-*
-* 👇 THIS NEEDS TO BE IMPLEMENTED NEXT
-* cat filein2 | > filein3       👈 super legal as well
-* cat filein2 | >				❌ not good
-* < filein2 | > filein3         👈 super legal as well
-*/
-
 static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
 	t_token		*token;
@@ -127,10 +135,6 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 		token = (t_token *)(curr_node->content);
 		if (is_redir_op(token))
 		{
-			/* the conditions below should be a proper function.
-			 * it should test whether the particular situation is legal,
-			 * which will then allow for unrestricted running of if else clauses.
-			 * there are more cases to test! ⚠️  */
 			if (!next_node
 				|| (((t_token *)next_node->content)->type != WORD
 					&& ft_strncmp(token->str, "|", 2) != 0))
@@ -166,7 +170,6 @@ static	void create_redir(t_token *token, char *file_name, int redir_type, int cm
 		redir->file_name = NULL;
 	redir->cmd_id = cmd_id;
 }
-
 
 /* TODO this function can be generalized to accept all tokens,
  * typecasting (if needed) according to instr_type */
