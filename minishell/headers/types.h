@@ -81,6 +81,7 @@ typedef struct s_cmd
 {
 	int		id;
 	int		group;
+	bool	is_empty_cmd;
 	char	*name;
 	char	*full_path;
 	char	**args;

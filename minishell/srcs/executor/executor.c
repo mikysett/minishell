@@ -39,7 +39,9 @@ static int	exec_instr(t_cmd *cmd, t_std_io *std_io, t_list **redirect)
 
 static int	exec_cmd(t_cmd *cmd)
 {
-	if (!ft_strncmp("echo", cmd->name, 5))
+	if (cmd->is_empty_cmd)
+		return (EXIT_SUCCESS);
+	else if (!ft_strncmp("echo", cmd->name, 5))
 		return (echo_builtin(cmd->args));
 	else if (!ft_strncmp("cd", cmd->name, 3))
 		return (cd_builtin(cmd->args));
