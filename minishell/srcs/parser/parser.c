@@ -112,8 +112,7 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 
 /* after a pipe, it is possible to have both a command or a redir.
 *
-* < filein2 | cat				👈 legal
-* < |							❌ not good
+* 👇 THIS NEEDS TO BE IMPLEMENTED NEXT
 * cat filein2 | > filein3       👈 super legal as well
 * cat filein2 | >				❌ not good
 * < filein2 | > filein3         👈 super legal as well
@@ -132,7 +131,9 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 			 * it should test whether the particular situation is legal,
 			 * which will then allow for unrestricted running of if else clauses.
 			 * there are more cases to test! ⚠️  */
-			if (!next_node || ((t_token *)next_node->content)->type != WORD)
+			if (!next_node
+				|| (((t_token *)next_node->content)->type != WORD
+					&& ft_strncmp(token->str, "|", 2) != 0))
 			{
 				prog_state(PARSER_ERROR);
 				return (NULL);
