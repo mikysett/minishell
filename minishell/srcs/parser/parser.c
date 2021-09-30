@@ -1,30 +1,22 @@
 #include "minishell.h"
 
-static t_list			*interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group);
-static t_list			*handle_command(t_list *tokens, int cmd_id, int cmd_group);
-static t_list			*handle_parens(t_list *curr_node, int cmd_id, int cmd_group);
-static t_list			*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id);
-static t_list			*handle_logical_op(t_list *curr_node, int cmd_id);
+static t_list			*parse_tokens(t_list *curr_node, int cmd_id, int cmd_group);
+static t_list			*parse_command(t_list *tokens, int cmd_id, int cmd_group);
+static t_list			*parse_parens(t_list *curr_node, int cmd_id, int cmd_group);
+static t_list			*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id);
+static t_list			*parse_logical_op(t_list *curr_node, int cmd_id);
 static void				create_redir(t_token *token, char *file_name, int redir_type, int cmd_id);
 
 t_minishell	*parser(char *line, t_minishell *minishell)
 {
-	t_list	*curr_node;
-	int		cmd_id;
-
 	minishell->tokens = calloc_or_exit(1, sizeof(t_list *));
 	minishell->instructions = calloc_or_exit(1, sizeof(t_list *));
 	minishell->redirect = calloc_or_exit(1, sizeof(t_list *));
 	minishell->tokens = lexer(line, minishell->tokens);
-	if (!*minishell->tokens)
-		return (minishell);
-	curr_node = *minishell->tokens;
-	cmd_id = 0;
-	if (prog_state(TAKE_STATE) == PROG_OK)
+	if (*minishell->tokens && prog_state(TAKE_STATE) == PROG_OK)
 	{
 		perform_expansions(minishell->tokens);
-		while (curr_node)
-			curr_node = interprets_tokens(curr_node, cmd_id++, 0);
+		parse_tokens(*minishell->tokens, 0, 0);
 		DEBUG(print_tokens(minishell->tokens);)
 		DEBUG(print_instructions(minishell->instructions);)
 		DEBUG(print_redirections(minishell->redirect);)
@@ -32,32 +24,41 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 	return (minishell);
 }
 
-/* always assumes every function call is the first token
- * TODO ensure comparing of ( ) with their types! */
-static t_list *interprets_tokens(t_list *curr_node, int cmd_id, int cmd_group)
+t_token	*get_token(t_list *curr_node)
 {
-	t_token			*curr_token;
-
-	curr_token = (t_token *)curr_node->content;
-	curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
-	if (prog_state(TAKE_STATE) != PROG_OK)
-		return (NULL);
-	if (((t_token *)curr_node->content)->type == WORD)
-		curr_node = handle_command(curr_node, cmd_id, cmd_group);
-	else if (is_logic_op(curr_token))
-		curr_node = handle_logical_op(curr_node, cmd_id);
-	else if (ft_strncmp(curr_token->str, "(", 2) == 0)
-		curr_node = handle_parens(curr_node, cmd_id, cmd_group);
-	else if (ft_strncmp(curr_token->str, ")", 2) == 0)
-		;// passing
-	if (curr_node)
-		curr_node = handle_redir(curr_node, curr_node->next, cmd_id);
-	if (prog_state(TAKE_STATE) != PROG_OK)
-		return (NULL);
-	return (curr_node);
+	return ((t_token *)curr_node->content);
 }
 
-static t_list *handle_parens(t_list *curr_node, int cmd_id, int cmd_group)
+/* always assumes every function call is the first token
+ * TODO ensure comparing of ( ) with their types! */
+static t_list *parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
+{
+	if (!curr_node)
+		return (NULL);
+	curr_node = parse_redir(curr_node, curr_node->next, cmd_id);
+	if (prog_state(TAKE_STATE) != PROG_OK || !curr_node)
+		return (NULL);
+	if (get_token(curr_node)->type == WORD)
+		curr_node = parse_command(curr_node, cmd_id, cmd_group);
+	else if (is_logic_op(get_token(curr_node)))
+		curr_node = parse_logical_op(curr_node, cmd_id);
+
+	else if (ft_strncmp(get_token(curr_node)->str, "(", 2) == 0)
+	{
+		// 
+		curr_node = parse_tokens(curr_node->next, cmd_id, ++cmd_group);
+		cmd_id = (ft_lstsize(*get_minishell(NULL)->instructions) - 1);
+	}
+	else if (ft_strncmp(get_token(curr_node)->str, ")", 2) == 0)
+		return (parse_tokens(curr_node->next, cmd_id, cmd_group));
+	if (curr_node)
+		curr_node = parse_redir(curr_node, curr_node->next, cmd_id);
+	if (prog_state(TAKE_STATE) != PROG_OK || !curr_node)
+		return (NULL);
+	return (parse_tokens(curr_node, cmd_id + 1, cmd_group));
+}
+
+static t_list *parse_parens(t_list *curr_node, int cmd_id, int cmd_group)
 {
 	t_token			*next_token;
 
@@ -76,13 +77,13 @@ static t_list *handle_parens(t_list *curr_node, int cmd_id, int cmd_group)
 		prog_state(PARSER_ERROR);
 		return (NULL);
 	}
-	return (interprets_tokens(curr_node->next, cmd_id + 1, 0));
+	return (parse_tokens(curr_node->next, cmd_id + 1, 0));
 }
 
 
 /* TODO needs more tools to ensure there is not any silly stuff like && &&, or && ||
  *		nor that any logical op is without preceding content ("&& cat filein2" should fail) */
-static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
+static t_list	*parse_logical_op(t_list *curr_node, int cmd_id)
 {
 	t_token		*token;
 	t_cmd 		*logical_op;
@@ -98,10 +99,10 @@ static t_list	*handle_logical_op(t_list *curr_node, int cmd_id)
 		prog_state(PARSER_ERROR);
 		return (NULL);
 	}
-	return (interprets_tokens(curr_node->next, cmd_id, 0));
+	return (curr_node->next);
 }
 
-static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
+static t_list	*parse_command(t_list *tokens, int cmd_id, int cmd_group)
 {
 	t_cmd	*cmd;
 	int		length;
@@ -126,7 +127,7 @@ static t_list	*handle_command(t_list *tokens, int cmd_id, int cmd_group)
 }
 
 /* the function checks for consecutive redirections */
-static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
+static t_list	*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
 	t_token		*token;
 
@@ -146,17 +147,18 @@ static t_list	*handle_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 			{
 				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id);
 				create_redir(token, NULL, REDIR_PIPE_IN, cmd_id + 1);
-				return (handle_redir(curr_node->next, next_node->next, cmd_id + 1));
+				return (parse_redir(curr_node->next, next_node->next, cmd_id + 1));
 			}
 				create_redir(token, ((t_token *)next_node->content)->str,
 					get_redir_type(token), cmd_id);
 			if (next_node->next && is_redir_op((t_token *)next_node->content))
-				return (handle_redir(next_node->next, curr_node->next, cmd_id));
+				return (parse_redir(next_node->next, curr_node->next, cmd_id));
 			return (next_node->next);
 		}
 	}
 	return (curr_node);
 }
+
 
 static	void create_redir(t_token *token, char *file_name, int redir_type, int cmd_id)
 {
