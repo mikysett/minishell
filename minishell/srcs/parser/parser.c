@@ -45,7 +45,6 @@ static t_list *parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 
 	else if (ft_strncmp(get_token(curr_node)->str, "(", 2) == 0)
 	{
-		// 
 		curr_node = parse_tokens(curr_node->next, cmd_id, ++cmd_group);
 		cmd_id = (ft_lstsize(*get_minishell(NULL)->instructions) - 1);
 	}
@@ -79,7 +78,6 @@ static t_list *parse_parens(t_list *curr_node, int cmd_id, int cmd_group)
 	}
 	return (parse_tokens(curr_node->next, cmd_id + 1, 0));
 }
-
 
 /* TODO needs more tools to ensure there is not any silly stuff like && &&, or && ||
  *		nor that any logical op is without preceding content ("&& cat filein2" should fail) */

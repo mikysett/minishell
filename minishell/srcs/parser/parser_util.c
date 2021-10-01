@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+/* needs to refactor pipe out */
 int		is_redir_op(t_token *token)
 {
 	char *str;
