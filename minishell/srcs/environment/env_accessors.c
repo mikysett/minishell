@@ -3,7 +3,7 @@
 static bool	update_env_var(t_env_var *old_var, t_env_var *new_var,
 	t_list *env_var_lst);
 
-t_env_var	*get_env_var(t_list *env_vars, char *key)
+t_env_var	*get_env_var(t_list *env_vars, const char *key)
 {
 	t_env_var	*curr_var;
 	const int	key_size = ft_strlen(key) + 1;
@@ -20,7 +20,7 @@ t_env_var	*get_env_var(t_list *env_vars, char *key)
 	return (NULL);
 }
 
-char	*get_env_var_value(t_list *env_vars, char *key)
+char	*get_env_var_value(t_list *env_vars, const char *key)
 {
 	t_env_var	*curr_var;
 	const int	key_size = ft_strlen(key) + 1;
