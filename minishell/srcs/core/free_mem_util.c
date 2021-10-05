@@ -21,9 +21,12 @@ void	del_instruction(void *instruction_void)
 	{
 		if (instruction->type == INSTR_CMD)
 		{
-			free(instruction->cmd->name);
-			free(instruction->cmd->full_path);
-			ft_free_str_arr(instruction->cmd->args);
+			if (instruction->cmd->is_empty_cmd == false)
+			{
+				free(instruction->cmd->name);
+				free(instruction->cmd->full_path);
+				ft_free_str_arr(instruction->cmd->args);
+			}
 			free(instruction->cmd);
 		}
 		free(instruction);

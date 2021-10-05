@@ -17,6 +17,11 @@ char			*get_token_end(char *str, t_token *token);
 // PERFORM_EXPANSIONS
 void			perform_expansions(t_list **tokens);
 
+// PARAMETER_EXPANSION
+void			parameter_expansion(t_list **tokens);
+void			expand_parameter(char *start_name, int size_name,
+	t_token *token);
+
 // FILENAME_EXPANSION
 void			filename_expansion(t_list **tokens);
 void			save_expansion_if_match(t_list **new_tokens, char *d_name,
