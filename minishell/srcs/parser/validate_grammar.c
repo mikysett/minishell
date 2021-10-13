@@ -51,18 +51,9 @@ void	validate_grammar(t_list *curr_node)
 				// 🟣 grammar.next is needed to avoid multiline commands
 				if ((!grammar.prev
 						|| (get_token(grammar.prev)->type != WORD
-							&& ft_strncmp(get_token(grammar.curr)->str, ")", 2) != 0))
+							&& ft_strncmp(get_token(grammar.prev)->str, ")", 2) != 0))
 					|| !grammar.next)
 					prog_state(PARSER_ERROR);
-					/* unexpected token is current_token */
-				/*
-				// ⬇️  the rule below can be ditched; it is redundant (above rule will fail on next iteration)
-				if (grammar.next
-					&& (is_logical_op(get_token(grammar_next))
-						|| is_pipe_op(get_token(grammar_next))))
-					prog_state(PARSER_ERROR);
-					// unexpected token is next_token
-				*/
 			}
 			else if (ft_strncmp(get_token(grammar.curr)->str, "(", 2) == 0)
 			{

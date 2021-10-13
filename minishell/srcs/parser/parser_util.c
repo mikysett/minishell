@@ -18,6 +18,7 @@ int		is_redir_op(t_token *token)
 			(ft_strncmp(str, "<", 2) == 0 || ft_strncmp(str, ">", 2) == 0
 			|| ft_strncmp(str, "<<", 3) == 0 || ft_strncmp(str, ">>", 3) == 0));
 	}
+	return (0);
 }
 
 int		is_logic_op(t_token *token)
