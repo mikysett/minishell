@@ -45,7 +45,6 @@ static t_list *parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 		curr_node = parse_command(curr_node, cmd_id, cmd_group);
 	else if (is_logic_op(get_token(curr_node)))
 		curr_node = parse_logical_op(curr_node, cmd_id);
-
 	else if (ft_strncmp(get_token(curr_node)->str, "(", 2) == 0)
 	{
 		curr_node = parse_tokens(curr_node->next, cmd_id, ++cmd_group);
@@ -144,7 +143,7 @@ static t_list	*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 				prog_state(PARSER_ERROR);
 				return (NULL);
 			}
-			if (ft_strncmp(token->str, "|", 2) == 0)
+		if (is_pipe_op(token))
 			{
 				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id);
 				create_redir(token, NULL, REDIR_PIPE_IN, cmd_id + 1);
