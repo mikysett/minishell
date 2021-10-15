@@ -51,7 +51,7 @@ static t_list *parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 		cmd_id = (ft_lstsize(*get_minishell(NULL)->instructions) - 1);
 	}
 	else if (ft_strncmp(get_token(curr_node)->str, ")", 2) == 0)
-		return (parse_tokens(curr_node->next, cmd_id, cmd_group));
+		return (parse_tokens(curr_node->next, cmd_id, cmd_group - 1));
 	if (curr_node)
 		curr_node = parse_redir(curr_node, curr_node->next, cmd_id);
 	if (prog_state(TAKE_STATE) != PROG_OK || !curr_node)
@@ -143,17 +143,17 @@ static t_list	*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 				prog_state(PARSER_ERROR);
 				return (NULL);
 			}
-		if (is_pipe_op(token))
-			{
-				create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id);
-				create_redir(token, NULL, REDIR_PIPE_IN, cmd_id + 1);
-				return (parse_redir(curr_node->next, next_node->next, cmd_id + 1));
-			}
-				create_redir(token, ((t_token *)next_node->content)->str,
-					get_redir_type(token), cmd_id);
+			create_redir(token, ((t_token *)next_node->content)->str,
+				get_redir_type(token), cmd_id);
 			if (next_node->next && is_redir_op((t_token *)next_node->content))
 				return (parse_redir(next_node->next, curr_node->next, cmd_id));
 			return (next_node->next);
+		}
+		if (is_pipe_op(token))
+		{
+			create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id);
+			create_redir(token, NULL, REDIR_PIPE_IN, cmd_id + 1);
+			return (parse_redir(curr_node->next, next_node->next, cmd_id + 1));
 		}
 	}
 	return (curr_node);
