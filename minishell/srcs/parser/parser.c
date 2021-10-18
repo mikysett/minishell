@@ -127,34 +127,28 @@ static t_list	*parse_command(t_list *tokens, int cmd_id, int cmd_group)
 }
 
 /* the function checks for consecutive redirections */
+/* argument next_node is useless now and can be removed */
 static t_list	*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 {
 	t_token		*token;
 
-	if (curr_node)
+	while (curr_node)
 	{
 		token = (t_token *)(curr_node->content);
 		if (is_redir_op(token))
 		{
-			if (!next_node
-				|| (((t_token *)next_node->content)->type != WORD
-					&& ft_strncmp(token->str, "|", 2) != 0))
-			{
-				prog_state(PARSER_ERROR);
-				return (NULL);
-			}
-			create_redir(token, ((t_token *)next_node->content)->str,
+			create_redir(token, ((t_token *)curr_node->next->content)->str,
 				get_redir_type(token), cmd_id);
-			if (next_node->next && is_redir_op((t_token *)next_node->content))
-				return (parse_redir(next_node->next, curr_node->next, cmd_id));
-			return (next_node->next);
+			curr_node = curr_node->next;
 		}
-		if (is_pipe_op(token))
+		else if (is_pipe_op(token))
 		{
 			create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id);
 			create_redir(token, NULL, REDIR_PIPE_IN, cmd_id + 1);
-			return (parse_redir(curr_node->next, next_node->next, cmd_id + 1));
 		}
+		else
+			break ;
+		curr_node = curr_node->next;
 	}
 	return (curr_node);
 }
