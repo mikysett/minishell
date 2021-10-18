@@ -14,7 +14,6 @@ char	*set_cmd_path(t_minishell *ms, t_cmd *cmd)
 		full_path = try_custom_path(cmd->name);
 	if (!full_path)
 	{
-		printf("ooook\n");
 		ft_putstr_fd(ms->prog_name, STDERR_FILENO);
 		ft_putstr_fd(": ", STDERR_FILENO);
 		perror(cmd->name);

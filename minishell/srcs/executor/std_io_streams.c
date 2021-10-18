@@ -30,7 +30,7 @@ void	save_std_out(t_minishell *ms)
 
 void	set_curr_in(t_std_io *std_io, int in_fd)
 {
-	fprintf(stderr, "set_curr_in: stdio, in fd: %d\n", in_fd);
+	DEBUG(fprintf(stderr, "set_curr_in: stdio, in fd: %d\n", in_fd);)
 	if (std_io->curr_in != STDIN_FILENO)
 	{
 		DEBUG(fprintf(stderr, "<< curr_in closing %d\n", std_io->curr_in);)
@@ -41,7 +41,7 @@ void	set_curr_in(t_std_io *std_io, int in_fd)
 
 void	set_curr_out(t_std_io *std_io, int out_fd)
 {
-	fprintf(stderr, "set_curr_out: stdio, out fd: %d\n", out_fd);
+	DEBUG(fprintf(stderr, "set_curr_out: stdio, out fd: %d\n", out_fd);)
 	if (std_io->curr_out != STDOUT_FILENO)
 	{
 		DEBUG(fprintf(stderr, "<< curr_out closing %d\n", std_io->curr_out);)
