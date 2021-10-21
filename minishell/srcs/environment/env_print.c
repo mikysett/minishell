@@ -45,10 +45,15 @@ static void	print_sgl_var(t_env_var *var)
 {
 	if (!var)
 		return ;
+	ft_putstr_fd("declare -x ", STDOUT_FILENO);
+	ft_putstr_fd(var->key, STDOUT_FILENO);
 	if (var->value)
-		printf("declare -x %s=\"%s\"\n", var->key, var->value);
-	else
-		printf("declare -x %s\n", var->key);
+	{
+		ft_putstr_fd("=\"", STDOUT_FILENO);
+		ft_putstr_fd(var->value, STDOUT_FILENO);
+		ft_putstr_fd("\"", STDOUT_FILENO);
+	}
+	ft_putstr_fd("\n", STDOUT_FILENO);
 }
 
 static void	reset_var_is_printed(t_list *env_vars)

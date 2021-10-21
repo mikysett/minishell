@@ -19,7 +19,7 @@ static void	restore_std_in(t_minishell *ms)
 {
 	if (ms->streams.stdin_saved == true)
 	{
-		DEBUG(fprintf(stderr, "!!!! - RESTORE stdin\n");)
+		DEBUG(fprintf(stderr, "%s< RESTORE stdin%s\n", CLR_BLUE, CLR_WHITE);)
 		ft_set_dup2(ms->streams.stdin_fd, STDIN_FILENO);
 		set_curr_in(&ms->streams, ms->streams.stdin_fd);
 		ms->streams.stdin_saved = false;
@@ -30,7 +30,7 @@ static void	restore_std_out(t_minishell *ms)
 {
 	if (ms->streams.stdout_saved == true)
 	{
-		DEBUG(fprintf(stderr, "!!!! - RESTORE stdout\n");)
+		DEBUG(fprintf(stderr, "%s> RESTORE stdout%s\n", CLR_BLUE, CLR_WHITE);)
 		ft_set_dup2(ms->streams.stdout_fd, STDOUT_FILENO);
 		set_curr_out(&ms->streams, ms->streams.stdout_fd);
 		ms->streams.stdout_saved = false;

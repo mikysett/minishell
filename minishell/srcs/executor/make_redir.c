@@ -61,7 +61,8 @@ static bool	set_redir_in(t_std_io *std_io, char *file_name)
 	set_curr_in(std_io, file_fd);
 	if (ft_set_dup2(file_fd, STDIN_FILENO) == false)
 		return (false);
-	DEBUG(fprintf(stderr, "!!!! - redir_in (fd %d to %d)\n", file_fd, STDIN_FILENO);)
+	DEBUG(fprintf(stderr, "%s< redir_in (fd %d to %d)%s\n",
+		CLR_BLUE, file_fd, STDIN_FILENO, CLR_WHITE);)
 	return (true);
 }
 
@@ -81,7 +82,8 @@ static bool	set_redir_out(t_std_io *std_io, char *file_name, t_redir_type type)
 	set_curr_out(std_io, file_fd);
 	if (ft_set_dup2(file_fd, STDOUT_FILENO) == false)
 		return (false);
-	DEBUG(fprintf(stderr, "!!!! - redir_out (fd %d to %d)\n", file_fd, STDOUT_FILENO);)
+	DEBUG(fprintf(stderr, "%s> redir_out (fd %d to %d)%s\n",
+		CLR_BLUE, file_fd, STDOUT_FILENO, CLR_WHITE);)
 	return (true);
 }
 
@@ -95,21 +97,21 @@ static bool	set_redir_pipe(t_std_io *std_io, t_redir_type type)
 		if (ft_init_pipe_fd(cmd_pipe) == false)
 			return (false);
 		set_curr_out(std_io, cmd_pipe[PIPE_WRITE]);
-		DEBUG(fprintf(stderr, "pipe fd - read: %2d   write: %2d\n",
-			cmd_pipe[0], cmd_pipe[1]);)
+		DEBUG(fprintf(stderr, "%spipe fd - read: %2d   write: %2d%s\n",
+			CLR_GREEN, cmd_pipe[0], cmd_pipe[1], CLR_WHITE);)
 		if (ft_set_dup2(cmd_pipe[PIPE_WRITE], STDOUT_FILENO) == false)
 			return (false);
-		DEBUG(fprintf(stderr, "!!!! - redir_pipe WRITE in STDOUT\n");)
+		DEBUG(fprintf(stderr, "%s> redir_pipe WRITE in STDOUT%s\n", CLR_BLUE, CLR_WHITE);)
 	}
 	else
 	{
 		save_std_in(get_minishell(NULL));
 		set_curr_in(std_io, cmd_pipe[PIPE_READ]);
-		DEBUG(fprintf(stderr, "pipe fd - read: %2d   write: %2d\n",
-			cmd_pipe[0], cmd_pipe[1]);)
+		DEBUG(fprintf(stderr, "%spipe fd - read: %2d   write: %2d%s\n",
+			CLR_GREEN, cmd_pipe[0], cmd_pipe[1], CLR_WHITE);)
 		if (ft_set_dup2(cmd_pipe[PIPE_READ], STDIN_FILENO) == false)
 			return (false);
-		DEBUG(fprintf(stderr, "!!!! - redir_pipe READ in STDIN\n");)
+		DEBUG(fprintf(stderr, "%s< redir_pipe READ in STDIN%s\n", CLR_BLUE, CLR_WHITE);)
 	}
 	return (true);
 }
