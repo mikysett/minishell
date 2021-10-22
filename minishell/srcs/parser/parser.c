@@ -113,7 +113,6 @@ static t_list	*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_gro
 	length = take_length_of_command(tokens) + 1;
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
-	free(cmd->name);
 	cmd->name = strdup_or_exit(((t_token *)tokens->content)->str);
 	tokens = tokens->next;
 	cmd->args = calloc_or_exit(length, sizeof(char **));
