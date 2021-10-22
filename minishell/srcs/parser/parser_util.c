@@ -106,7 +106,7 @@ t_cmd		*init_instruction(t_minishell *ms, t_instr_type type)
 	if (type == INSTR_CMD)
 	{
 		instr->cmd = calloc_or_exit(1, sizeof(t_cmd));
-		(instr->cmd)->name = NULL;
+		instr->cmd->is_empty_cmd = true;
 	}
 	else
 		instr->cmd = NULL;

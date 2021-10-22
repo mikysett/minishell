@@ -44,10 +44,8 @@ static t_list *parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	new_command = init_instruction(get_minishell(NULL), INSTR_CMD);
 	if (prog_state(TAKE_STATE) != PROG_OK || !curr_node)
 		return (NULL);
-	if (get_token(curr_node)->type == WORD)
+	else if (get_token(curr_node)->type == WORD)
 		curr_node = parse_command(curr_node, new_command, cmd_id, cmd_group);
-	else if (is_logic_op(get_token(curr_node)))
-		curr_node = parse_logical_op(curr_node, cmd_id);
 	else if (ft_strncmp(get_token(curr_node)->str, "(", 2) == 0)
 	{
 		curr_node = parse_tokens(curr_node->next, cmd_id, ++cmd_group);
@@ -114,6 +112,7 @@ static t_list	*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_gro
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
 	cmd->name = strdup_or_exit(((t_token *)tokens->content)->str);
+	cmd->is_empty_cmd = false;
 	tokens = tokens->next;
 	cmd->args = calloc_or_exit(length, sizeof(char **));
 	i = 0;
