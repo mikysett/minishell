@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 static t_list			*parse_tokens(t_list *curr_node, int cmd_id, int cmd_group);
-static t_list			*parse_command(t_list *tokens, int cmd_id, int cmd_group);
+static t_list			*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_group);
 static t_list			*parse_parens(t_list *curr_node, int cmd_id, int cmd_group);
 static t_list			*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id);
 static t_list			*parse_logical_op(t_list *curr_node, int cmd_id);
@@ -36,13 +36,16 @@ t_token	*get_token(t_list *curr_node)
  * TODO ensure comparing of ( ) with their types! */
 static t_list *parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 {
+	t_cmd *new_command;
+
 	if (!curr_node)
 		return (NULL);
 	curr_node = parse_redir(curr_node, curr_node->next, cmd_id);
+	new_command = init_instruction(get_minishell(NULL), INSTR_CMD);
 	if (prog_state(TAKE_STATE) != PROG_OK || !curr_node)
 		return (NULL);
 	if (get_token(curr_node)->type == WORD)
-		curr_node = parse_command(curr_node, cmd_id, cmd_group);
+		curr_node = parse_command(curr_node, new_command, cmd_id, cmd_group);
 	else if (is_logic_op(get_token(curr_node)))
 		curr_node = parse_logical_op(curr_node, cmd_id);
 	else if (ft_strncmp(get_token(curr_node)->str, "(", 2) == 0)
@@ -102,16 +105,15 @@ static t_list	*parse_logical_op(t_list *curr_node, int cmd_id)
 	return (curr_node->next);
 }
 
-static t_list	*parse_command(t_list *tokens, int cmd_id, int cmd_group)
+static t_list	*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_group)
 {
-	t_cmd	*cmd;
 	int		length;
 	int		i;
 
-	cmd = init_instruction(get_minishell(NULL), INSTR_CMD);
 	length = take_length_of_command(tokens) + 1;
 	cmd->id = cmd_id;
 	cmd->group = cmd_group;
+	free(cmd->name);
 	cmd->name = strdup_or_exit(((t_token *)tokens->content)->str);
 	tokens = tokens->next;
 	cmd->args = calloc_or_exit(length, sizeof(char **));
@@ -152,7 +154,6 @@ static t_list	*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 	}
 	return (curr_node);
 }
-
 
 static	void create_redir(t_token *token, char *file_name, int redir_type, int cmd_id)
 {
