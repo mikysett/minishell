@@ -40,7 +40,16 @@ int				take_length_of_command(t_list *node);
 t_cmd			*init_empty_cmd(int cmd_id, int cmd_group);
 t_cmd			*init_instruction(t_minishell *ms, t_instr_type type);
 t_redirect		*init_redirection(t_minishell *ms, t_redir_type type);
+void			create_redir(t_token *token, char *file_name,
+					int redir_type, int cmd_id);
 int				get_redir_type(t_token *token);
 void			validate_grammar(t_list *curr_node);
+void	parse_tokens(t_list *curr_node, int cmd_id, int cmd_group);
+t_list	*parse_logical_op(t_list *curr_node);
+t_list	*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_group);
+t_list	*parse_pipe(t_list *curr_node, int cmd_id);
+t_list	*parse_redir(t_list *curr_node, int cmd_id);
+void create_command_and_redir(t_list *curr_node, int cmd_id, int cmd_group);
+
 
 #endif
