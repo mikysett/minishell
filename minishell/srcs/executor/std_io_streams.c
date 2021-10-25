@@ -5,12 +5,6 @@ void	save_std_in(t_minishell *ms)
 	if (ms->streams.stdin_saved == false)
 	{
 		ms->streams.stdin_fd = ft_set_dup(STDIN_FILENO);
-		DEBUG(fprintf(stderr, "%s< SAVE stdin, fd: %d%s\n",
-			CLR_BLUE, ms->streams.stdin_fd, CLR_WHITE);)
-		if (ms->streams.stdin_fd == -1)
-		{
-			DEBUG(fprintf(stderr, "save std err\n");)
-		}
 		ms->streams.stdin_saved = true;
 	}
 }

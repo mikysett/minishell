@@ -1,9 +1,9 @@
 #include "minishell.h"
 
 static bool	setup_pipe_redir(t_std_io *std_io, t_list *curr, int id,
-	t_has_redirs *has_redirs);
+				t_has_redirs *has_redirs);
 static bool	setup_other_redir(t_std_io *std_io, t_list *curr, int id,
-	t_has_redirs *has_redirs);
+				t_has_redirs *has_redirs);
 
 bool	setup_redirect(t_std_io *std_io, t_list **redirect, int id)
 {
@@ -23,7 +23,7 @@ static bool	setup_pipe_redir(t_std_io *std_io, t_list *curr, int id,
 	t_has_redirs *has_redirs)
 {
 	t_redirect		*curr_redir;
-	
+
 	while (curr)
 	{
 		curr_redir = (t_redirect *)curr->content;
@@ -49,7 +49,7 @@ static bool	setup_other_redir(t_std_io *std_io, t_list *curr, int id,
 	t_has_redirs *has_redirs)
 {
 	t_redirect		*curr_redir;
-	
+
 	while (curr)
 	{
 		curr_redir = (t_redirect *)curr->content;

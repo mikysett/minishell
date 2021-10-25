@@ -7,7 +7,7 @@ bool	is_redir_in(t_redir_type type)
 	return (false);
 }
 
-int		ft_set_dup(int old_fd)
+int	ft_set_dup(int old_fd)
 {
 	int	new_fd;
 

@@ -32,8 +32,8 @@ int	cd_builtin(char **argv)
 
 static int	update_pwd_vars(t_list **env_vars, const char *old_pwd_str)
 {
-	t_env_var *oldpwd;
-	t_env_var *pwd;
+	t_env_var	*oldpwd;
+	t_env_var	*pwd;
 
 	oldpwd = get_env_var(*env_vars, "OLDPWD");
 	if (oldpwd)
@@ -48,7 +48,7 @@ static int	update_pwd_vars(t_list **env_vars, const char *old_pwd_str)
 static void	update_oldpwd_var(t_env_var *oldpwd, const char *old_pwd_str)
 {
 	if (oldpwd->value)
-			free(oldpwd->value);
+		free(oldpwd->value);
 	oldpwd->value = strdup_or_exit((char *)old_pwd_str);
 }
 

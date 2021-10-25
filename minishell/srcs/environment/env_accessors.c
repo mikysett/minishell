@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 static bool	update_env_var(t_env_var *old_var, t_env_var *new_var,
-	t_list *env_var_lst);
+				t_list *env_var_lst);
 
 t_env_var	*get_env_var(t_list *env_vars, const char *key)
 {

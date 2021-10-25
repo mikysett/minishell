@@ -2,7 +2,7 @@
 
 static bool	is_std_cmd(char *cmd_name);
 static char	*try_default_paths(char **paths, char *cmd_name);
-static char *try_custom_path(char *cmd_name);
+static char	*try_custom_path(char *cmd_name);
 
 char	*set_cmd_path(t_minishell *ms, t_cmd *cmd)
 {
@@ -36,7 +36,7 @@ static char	*try_default_paths(char **paths, char *cmd_name)
 {
 	int			i;
 	int			cmd_path_size;
-	const int	cmd_name_len = ft_strlen(cmd_name);;
+	const int	cmd_name_len = ft_strlen(cmd_name);
 	char		*full_path;
 
 	i = 0;

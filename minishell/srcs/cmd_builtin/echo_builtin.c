@@ -30,6 +30,6 @@ int	echo_builtin(char **argv)
 static bool	get_print_newline(int argc, char **argv)
 {
 	if (argc >= 2 && !ft_strncmp("-n", argv[1], 3))
-			return (false);
+		return (false);
 	return (true);
 }
