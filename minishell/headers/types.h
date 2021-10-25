@@ -128,6 +128,13 @@ typedef struct s_std_io
 	int		curr_out;
 }				t_std_io;
 
+typedef struct s_grammar_vars {
+	t_list		*curr;
+	t_list		*prev;
+	t_list		*next;
+	int			paren_count;
+}				t_grammar_vars;
+
 typedef struct s_minishell
 {
 	char	*prog_name;
