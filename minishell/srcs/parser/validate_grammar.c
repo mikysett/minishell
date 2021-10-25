@@ -1,8 +1,12 @@
 #include <minishell.h>
 
+#define ERROR_MESSAGE "minishell: syntax error near unexpected token '"
+
 static void	advance_node(t_grammar_vars *grammar);
 static void	initializes_grammar_vars(t_grammar_vars *grammar, t_list *curr_node);
 static void	check_grammar_conditions(t_grammar_vars *grammar);
+static void print_faulty_token(t_grammar_vars *grammar);
+
 
 void	validate_grammar(t_list *curr_node)
 {
@@ -13,6 +17,18 @@ void	validate_grammar(t_list *curr_node)
 		check_grammar_conditions(&grammar);
 	if (grammar.paren_count > 0)
 		prog_state(PARSER_ERROR);
+	if (prog_state(TAKE_STATE) != PROG_OK)
+		print_faulty_token(&grammar);
+}
+
+static void print_faulty_token(t_grammar_vars *grammar)
+{
+	char *token;
+
+	token = ((t_token *)grammar->curr->content)->str;
+	write(1, &ERROR_MESSAGE, ft_strlen(ERROR_MESSAGE));
+	write(1, token, ft_strlen(token));
+	write(1, "\'\n", 2);
 }
 
 static void	advance_node(t_grammar_vars *grammar)
