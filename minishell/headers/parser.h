@@ -41,6 +41,7 @@ int				is_paren_op(t_token *token);
 int				is_logic_op(t_token *token);
 int				is_redir_op(t_token *token);
 int				take_length_of_command(t_list *node);
+t_cmd			*init_empty_cmd(int cmd_id, int cmd_group);
 t_cmd			*init_instruction(t_minishell *ms, t_instr_type type);
 t_redirect		*init_redirection(t_minishell *ms, t_redir_type type);
 int				get_redir_type(t_token *token);

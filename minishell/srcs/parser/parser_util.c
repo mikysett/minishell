@@ -90,6 +90,16 @@ t_redirect	*init_redirection(t_minishell *ms, t_redir_type type)
 	return (redir);
 }
 
+t_cmd		*init_empty_cmd(int cmd_id, int cmd_group)
+{
+	t_cmd	*new_cmd;
+
+	new_cmd = init_instruction(get_minishell(NULL), INSTR_CMD);
+	new_cmd->id = cmd_id;
+	new_cmd->group = cmd_group;
+	return (new_cmd);
+}
+
 /* initiates an instruction outside of the main
  * handling functions; this ensures allocation is retrievable
  * in case of failure at the handler function */

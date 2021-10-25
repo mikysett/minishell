@@ -1,10 +1,12 @@
 #include "minishell.h"
 
-static t_list			*parse_tokens(t_list *curr_node, int cmd_id, int cmd_group);
+static bool	is_logical_op_instruction(t_list *curr_node);
+
+static void				parse_tokens(t_list *curr_node, int cmd_id, int cmd_group);
 static t_list			*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_group);
-static t_list			*parse_parens(t_list *curr_node, int cmd_id, int cmd_group);
-static t_list			*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id);
-static t_list			*parse_logical_op(t_list *curr_node, int cmd_id);
+static t_list			*parse_pipe(t_list *curr_node, int cmd_id);
+static t_list			*parse_redir(t_list *curr_node, int cmd_id);
+static t_list			*parse_logical_op(t_list *curr_node);
 static void				create_redir(t_token *token, char *file_name, int redir_type, int cmd_id);
 
 t_minishell	*parser(char *line, t_minishell *minishell)
@@ -29,78 +31,87 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 
 t_token	*get_token(t_list *curr_node)
 {
-	return ((t_token *)curr_node->content);
+	if (curr_node)
+		return ((t_token *)curr_node->content);
+	return (NULL);
 }
 
 /* always assumes every function call is the first token
  * TODO ensure comparing of ( ) with their types! */
-static t_list *parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
+static void	parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 {
-	t_cmd *new_command;
+	static t_cmd 	*new_command = NULL;
+	t_token			*curr_token;
 
 	if (!curr_node)
-		return (NULL);
-	curr_node = parse_redir(curr_node, curr_node->next, cmd_id);
-	new_command = init_instruction(get_minishell(NULL), INSTR_CMD);
-	if (prog_state(TAKE_STATE) != PROG_OK || !curr_node)
-		return (NULL);
-	else if (get_token(curr_node)->type == WORD)
-		curr_node = parse_command(curr_node, new_command, cmd_id, cmd_group);
-	else if (ft_strncmp(get_token(curr_node)->str, "(", 2) == 0)
-	{
-		curr_node = parse_tokens(curr_node->next, cmd_id, ++cmd_group);
-		cmd_id = (ft_lstsize(*get_minishell(NULL)->instructions) - 1);
-	}
-	else if (ft_strncmp(get_token(curr_node)->str, ")", 2) == 0)
-		return (parse_tokens(curr_node->next, cmd_id, cmd_group - 1));
-	if (curr_node)
-		curr_node = parse_redir(curr_node, curr_node->next, cmd_id);
-	if (prog_state(TAKE_STATE) != PROG_OK || !curr_node)
-		return (NULL);
-	return (parse_tokens(curr_node, cmd_id + 1, cmd_group));
-}
-
-static t_list *parse_parens(t_list *curr_node, int cmd_id, int cmd_group)
-{
-	t_token			*next_token;
-
-	if (curr_node->next)
-	{
-		next_token = (t_token *)curr_node->next;
-		if (ft_strncmp(next_token->str, "|", 2) == 0
-			|| ft_strncmp(next_token->str, ")", 2) == 0)
-		{
-			prog_state(PARSER_ERROR);
-			return (NULL);
-		}
-	}
+		return ;
+	curr_token = get_token(curr_node);
+	if (is_logical_op_instruction(curr_node))
+		parse_tokens(parse_logical_op(curr_node), cmd_id, cmd_group);
+	else if (curr_token->type == OPERATOR && ft_strncmp(curr_token->str, "(", 2) == 0)
+		parse_tokens(curr_node->next, cmd_id, cmd_group + 1);
+	else if (curr_token->type == OPERATOR && ft_strncmp(curr_token->str, ")", 2) == 0)
+		parse_tokens(curr_node->next, cmd_id, cmd_group - 1);
+	else if (is_pipe_op(curr_token))
+		parse_tokens(parse_pipe(curr_node, cmd_id - 1), cmd_id, cmd_group);
 	else
 	{
-		prog_state(PARSER_ERROR);
-		return (NULL);
+		new_command = init_empty_cmd(cmd_id, cmd_group);
+		curr_node = parse_redir(curr_node, cmd_id);
+		if (curr_node)
+		{
+			curr_token = get_token(curr_node);
+			if (curr_token->type == WORD)
+			{
+				curr_node = parse_command(curr_node, new_command, cmd_id, cmd_group);
+				curr_node = parse_redir(curr_node, cmd_id);
+			}
+			parse_tokens(curr_node, cmd_id + 1, cmd_group);
+		}
 	}
-	return (parse_tokens(curr_node->next, cmd_id + 1, 0));
+}
+
+static bool	is_logical_op_instruction(t_list *curr_node)
+{
+	t_token	*token;
+
+	if (curr_node)
+	{
+		token = (t_token *)(curr_node->content);
+		if (token->type == OPERATOR &&
+			(ft_strncmp(token->str, "&&", 3) == 0
+				|| ft_strncmp(token->str, "||", 3) == 0))
+			return (true);
+	}
+	return (false);
 }
 
 /* TODO needs more tools to ensure there is not any silly stuff like && &&, or && ||
  *		nor that any logical op is without preceding content ("&& cat filein2" should fail) */
-static t_list	*parse_logical_op(t_list *curr_node, int cmd_id)
+static t_list	*parse_logical_op(t_list *curr_node)
 {
-	t_token		*token;
-	t_cmd 		*logical_op;
+	t_token			*token;
+	t_instr_type	instr_type;
 
-	(void)cmd_id;
-	token = (t_token *)(curr_node->content);
-	if (ft_strncmp(token->str, "&&", 3) == 0)
-		logical_op = init_instruction(get_minishell(NULL), INSTR_AND);
-	else if (ft_strncmp(token->str, "||", 3) == 0)
-		logical_op = init_instruction(get_minishell(NULL), INSTR_OR);
-	else
+	instr_type = INSTR_CMD;
+	if (curr_node)
 	{
-		prog_state(PARSER_ERROR);
-		return (NULL);
+		token = (t_token *)(curr_node->content);
+		if (token->type == OPERATOR)
+		{
+			if (ft_strncmp(token->str, "&&", 3) == 0)
+				instr_type = INSTR_AND;
+			else if (ft_strncmp(token->str, "||", 3) == 0)
+				instr_type = INSTR_OR;
+			if (instr_type != INSTR_CMD)
+			{
+				init_instruction(get_minishell(NULL), instr_type);
+				return (curr_node->next);
+			}
+		}
+		return (curr_node);
 	}
-	return (curr_node->next);
+	return (NULL);
 }
 
 static t_list	*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_group)
@@ -126,9 +137,18 @@ static t_list	*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_gro
 	return (tokens);
 }
 
+static t_list	*parse_pipe(t_list *curr_node, int cmd_id)
+{
+	const t_token	*token = (t_token *)curr_node->content;
+
+	create_redir((t_token *)token, NULL, REDIR_PIPE_OUT, cmd_id);
+	create_redir((t_token *)token, NULL, REDIR_PIPE_IN, cmd_id + 1);
+	return (curr_node->next);
+}
+
 /* the function checks for consecutive redirections */
 /* argument next_node is useless now and can be removed */
-static t_list	*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id)
+static t_list	*parse_redir(t_list *curr_node, int cmd_id)
 {
 	t_token		*token;
 
@@ -139,16 +159,10 @@ static t_list	*parse_redir(t_list *curr_node, t_list *next_node, int cmd_id)
 		{
 			create_redir(token, ((t_token *)curr_node->next->content)->str,
 				get_redir_type(token), cmd_id);
-			curr_node = curr_node->next;
-		}
-		else if (is_pipe_op(token))
-		{
-			create_redir(token, NULL, REDIR_PIPE_OUT, cmd_id);
-			create_redir(token, NULL, REDIR_PIPE_IN, cmd_id + 1);
+			curr_node = curr_node->next->next;
 		}
 		else
 			break ;
-		curr_node = curr_node->next;
 	}
 	return (curr_node);
 }
@@ -164,21 +178,4 @@ static	void create_redir(t_token *token, char *file_name, int redir_type, int cm
 	else
 		redir->file_name = NULL;
 	redir->cmd_id = cmd_id;
-}
-
-/* TODO this function can be generalized to accept all tokens,
- * typecasting (if needed) according to instr_type */
-static void		insert_token_in_list(void *instruction, int instr_type)
-{
-	t_minishell *ms;
-	t_list	*new_node;
-
-	ms = get_minishell(NULL);
-	if (instr_type == INSTR_CMD)
-	{
-		new_node = ft_lstnew(instruction);
-		if (!(new_node))
-			return;
-		ft_lstadd_back(ms->instructions, new_node);
-	}
 }
