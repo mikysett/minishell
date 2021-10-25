@@ -28,7 +28,6 @@ void	interactive_mode(t_minishell *ms)
 			free(line);
 		prog_state(PROG_READ);
 	}
-	// rl_clear_history(); // Compatibility issues with mac os
 }
 
 static void	set_signals(t_minishell *ms)
@@ -47,7 +46,7 @@ static void	new_line_handler(int signal)
 	ms = get_minishell(NULL);
 	ms->exit_code = EXIT_SIGINT;
 	prog_state(SIGINT_RECEIVED);
-	write(STDIN_FILENO, "\n", 1); // TODO check if this works when there is stdin redirect
+	write(STDIN_FILENO, "\n", 1);
 	if (signal == SIGINT && old_state == PROG_READ)
 	{
 		ms->streams.stdin_fd = ft_set_dup(STDIN_FILENO);

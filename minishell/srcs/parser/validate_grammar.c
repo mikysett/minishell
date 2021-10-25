@@ -1,24 +1,26 @@
 #include <minishell.h>
 
-#define ERROR_MESSAGE "minishell: syntax error near unexpected token '"
-
 static void	advance_node(t_grammar_vars *grammar);
 static void	initializes_grammar_vars(t_grammar_vars *grammar, t_list *curr_node);
-static void	check_grammar_conditions(t_grammar_vars *grammar);
+static bool	check_token(t_grammar_vars *grammar);
 static void print_faulty_token(t_grammar_vars *grammar);
-
 
 void	validate_grammar(t_list *curr_node)
 {
 	t_grammar_vars	grammar;
 
 	initializes_grammar_vars(&grammar, curr_node);
-	while (grammar.curr && prog_state(TAKE_STATE) == PROG_OK)
-		check_grammar_conditions(&grammar);
-	if (grammar.paren_count > 0)
-		prog_state(PARSER_ERROR);
-	if (prog_state(TAKE_STATE) != PROG_OK)
-		print_faulty_token(&grammar);
+	while (grammar.curr)
+	{
+		if (!check_token(&grammar)
+			|| (!grammar.next && grammar.paren_count > 0))
+		{
+			print_faulty_token(&grammar);
+			prog_state(PARSER_ERROR);
+			break ;
+		}
+		advance_node(&grammar);
+	}
 }
 
 static void print_faulty_token(t_grammar_vars *grammar)
@@ -52,29 +54,24 @@ static void	initializes_grammar_vars(t_grammar_vars *grammar, t_list *curr_node)
 		grammar->next = NULL;
 }
 
-static void	check_grammar_conditions(t_grammar_vars *grammar)
+static bool	check_token(t_grammar_vars *grammar)
 {
 	if (get_token(grammar->curr)->op_type == OP_REDIR
 		&& (!grammar->next || (get_token(grammar->next)->type != WORD)))
-			prog_state(PARSER_ERROR);
+			return (false);
 	else if (get_token(grammar->curr)->op_type == OP_LOGIC
 			|| get_token(grammar->curr)->op_type == OP_PIPE)
 	{
-		if ((!grammar->prev
-				|| (get_token(grammar->prev)->type != WORD
-					&& ft_strncmp(get_token(grammar->prev)->str, ")", 2) != 0))
-			|| !grammar->next)
-			prog_state(PARSER_ERROR);
+		if (!grammar->prev || !grammar->next
+			|| (get_token(grammar->prev)->type != WORD
+				&& get_token(grammar->prev)->op_type != OP_PARENS_CLOSE))
+			return (false);
 	}
-	else if (ft_strncmp(get_token(grammar->curr)->str, "(", 2) == 0)
-	{
-		if (!grammar->next || ft_strncmp(get_token(grammar->next)->str, ")", 2) == 0)
-			prog_state(PARSER_ERROR);
+	else if (get_token(grammar->curr)->op_type == OP_PARENS_OPEN)
 		grammar->paren_count++;
-	}
-	else if (ft_strncmp(get_token(grammar->curr)->str, ")", 2) == 0)
-		if (--grammar->paren_count < 0)
-			prog_state(PARSER_ERROR);
-	if (prog_state(TAKE_STATE) == PROG_OK)
-		advance_node(grammar);
+	else if (get_token(grammar->curr)->op_type == OP_PARENS_CLOSE)
+		if (--grammar->paren_count < 0
+			|| get_token(grammar->prev)->op_type == OP_PARENS_OPEN)
+			return (false);
+	return (true);
 }

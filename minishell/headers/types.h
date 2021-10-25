@@ -11,8 +11,11 @@
 # define CLR_PURPLE	"\033[0;35m"
 # define CLR_CYAN	"\033[0;36m"
 
+# define ERROR_MESSAGE "minishell: syntax error near unexpected token `"
+
 # define MAX_PROMPT_SIZE		80
 
+# define EXIT_PARSER_ERROR		258
 # define EXIT_INCORRECT_USAGE	2
 # define EXIT_FILE_NOT_EXEC		126
 # define EXIT_FILE_NOT_FOUND	127

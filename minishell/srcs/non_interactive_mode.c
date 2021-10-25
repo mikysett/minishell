@@ -38,7 +38,7 @@ void	process_line(t_minishell *ms, char *line)
 			restore_std_io(false, false);
 		}
 		else
-			ms->exit_code = EXIT_INCORRECT_USAGE;
+			ms->exit_code = EXIT_PARSER_ERROR;
 		reset_minishell(ms);
 	}
 }
