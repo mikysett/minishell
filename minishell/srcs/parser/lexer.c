@@ -1,9 +1,9 @@
 #include "minishell.h"
 
-static t_token	*init_token(char *token_start);
-static t_token_type	get_token_type(char *token_start);
+static t_token			*init_token(char *token_start);
+static t_token_type		get_token_type(char *token_start);
 static t_operator_type	get_operator_type(t_token *token);
-static void	save_token(t_list **tokens, t_token *curr_token);
+static void				save_token(t_list **tokens, t_token *curr_token);
 
 t_list	**lexer(char *line, t_list **tokens)
 {

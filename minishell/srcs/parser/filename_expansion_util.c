@@ -2,7 +2,8 @@
 
 static char		*last_consecutive_asterisk(char *str);
 static int		get_str_to_match_len(char *str);
-static char		*pos_last_match(char *d_name, char *str_to_match, int match_len);
+static char		*pos_last_match(char *d_name,
+					char *str_to_match, int match_len);
 static void		add_new_word_token(t_list **new_tokens, char *token_str);
 
 void	save_expansion_if_match(t_list **new_tokens, char *d_name,
@@ -27,7 +28,6 @@ void	save_expansion_if_match(t_list **new_tokens, char *d_name,
 			return ;
 		token_str += 1 + str_to_match_len;
 	}
-	DEBUG(printf("%sMATCHED          : %s\n%s", CLR_BLUE, original_d_name, CLR_WHITE);)
 	add_new_word_token(new_tokens, (char *)original_d_name);
 }
 
@@ -47,7 +47,7 @@ static char	*last_consecutive_asterisk(char *str)
 static int	get_str_to_match_len(char *str)
 {
 	const char	*o_str = str;
-	
+
 	while (*str && *str != '*')
 		str++;
 	return (str - o_str);
@@ -59,10 +59,6 @@ static char	*pos_last_match(char *d_name, char *str_to_match, int match_len)
 	int		nb_possible_matchs;
 
 	nb_possible_matchs = ft_strlen(d_name) - match_len + 1;
-	DEBUG (
-		printf("  %sd_name:%-14s | str_to_match: %-8.*s | match_len: %d | nb_pos: %d\n%s",
-			CLR_YELLOW, d_name, match_len, str_to_match, match_len, nb_possible_matchs, CLR_WHITE);
-	)
 	curr_match = NULL;
 	while (nb_possible_matchs > 0)
 	{
