@@ -2,12 +2,6 @@
 #include <stdbool.h>
 #include <minishell.h>
 
-typedef struct s_grammar_vars {
-	t_list		*curr;
-	t_list		*prev;
-	t_list		*next;
-}				t_grammar_vars;
-
 void	advance_node(t_grammar_vars *grammar)
 {
 	grammar->prev = grammar->curr;
@@ -38,15 +32,15 @@ void	validate_grammar(t_list *curr_node)
 	while (grammar.curr && prog_state(TAKE_STATE) == PROG_OK)
 	{
 		// ✅ redirections NEED a word after!
-		if (is_redir_op(get_token(grammar.curr))
+		if (get_token(grammar.curr)->op_type == OP_REDIR
 			&& (!grammar.next || (get_token(grammar.next)->type != WORD)))
 				prog_state(PARSER_ERROR);
 				/* unexpected token is current_token */
 
 		// logic and pipe need close parens or word on the left,
 		// and cannot have logic or pipe operators on the right!
-		else if (is_logic_op(get_token(grammar.curr))
-				|| is_pipe_op(get_token(grammar.curr)))
+		else if (get_token(grammar.curr)->op_type == OP_LOGIC
+				|| get_token(grammar.curr)->op_type == OP_PIPE)
 		{
 			// grammar.prev must be word or closing paren
 			// 🟣 grammar.next is needed to avoid multiline commands

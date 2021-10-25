@@ -2,7 +2,7 @@
 
 bool	is_redir_in(t_redir_type type)
 {
-	if (type == REDIR_HERE_DOC || type == REDIR_IN || type == REDIR_PIPE_IN)
+	if (type == REDIR_HERE_DOC || type == REDIR_IN)
 		return (true);
 	return (false);
 }

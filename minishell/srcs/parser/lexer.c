@@ -2,6 +2,7 @@
 
 static t_token	*init_token(char *token_start);
 static t_token_type	get_token_type(char *token_start);
+static t_operator_type	get_operator_type(t_token *token);
 static void	save_token(t_list **tokens, t_token *curr_token);
 
 t_list	**lexer(char *line, t_list **tokens)
@@ -16,6 +17,7 @@ t_list	**lexer(char *line, t_list **tokens)
 		curr_token = init_token(token_start);
 		token_end = get_token_end(token_start, curr_token);
 		curr_token->str = ft_strndup(token_start, token_end - token_start);
+		curr_token->op_type = get_operator_type(curr_token);
 		if (!curr_token->str)
 			ft_error_exit(MEMORY_FAIL);
 		save_token(tokens, curr_token);
@@ -39,6 +41,23 @@ static t_token_type	get_token_type(char *token_start)
 		return (OPERATOR);
 	else
 		return (WORD);
+}
+
+static t_operator_type	get_operator_type(t_token *token)
+{
+	if (token->type != OPERATOR)
+		return (OP_NONE);
+	if (ft_strncmp(token->str, "(", 2) == 0)
+		return (OP_PARENS_OPEN);
+	else if (ft_strncmp(token->str, ")", 2) == 0)
+		return (OP_PARENS_CLOSE);
+	else if (ft_strncmp(token->str, "|", 2) == 0)
+		return (OP_PIPE);
+	else if (ft_strncmp(token->str, "&&", 3) == 0
+		|| ft_strncmp(token->str, "||", 3) == 0)
+		return (OP_LOGIC);
+	else
+		return (OP_REDIR);
 }
 
 static void	save_token(t_list **tokens, t_token *curr_token)

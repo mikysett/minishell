@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-static bool	is_logical_op_instruction(t_list *curr_node);
-
 static void				parse_tokens(t_list *curr_node, int cmd_id, int cmd_group);
 static t_list			*parse_command(t_list *tokens, t_cmd *cmd, int cmd_id, int cmd_group);
 static t_list			*parse_pipe(t_list *curr_node, int cmd_id);
@@ -46,13 +44,13 @@ static void	parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	if (!curr_node)
 		return ;
 	curr_token = get_token(curr_node);
-	if (is_logical_op_instruction(curr_node))
+	if (curr_token->op_type == OP_LOGIC)
 		parse_tokens(parse_logical_op(curr_node), cmd_id, cmd_group);
-	else if (curr_token->type == OPERATOR && ft_strncmp(curr_token->str, "(", 2) == 0)
+	else if (curr_token->op_type == OP_PARENS_OPEN)
 		parse_tokens(curr_node->next, cmd_id, cmd_group + 1);
-	else if (curr_token->type == OPERATOR && ft_strncmp(curr_token->str, ")", 2) == 0)
+	else if (curr_token->op_type == OP_PARENS_CLOSE)
 		parse_tokens(curr_node->next, cmd_id, cmd_group - 1);
-	else if (is_pipe_op(curr_token))
+	else if (curr_token->op_type == OP_PIPE)
 		parse_tokens(parse_pipe(curr_node, cmd_id - 1), cmd_id, cmd_group);
 	else
 	{
@@ -71,21 +69,6 @@ static void	parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	}
 }
 
-static bool	is_logical_op_instruction(t_list *curr_node)
-{
-	t_token	*token;
-
-	if (curr_node)
-	{
-		token = (t_token *)(curr_node->content);
-		if (token->type == OPERATOR &&
-			(ft_strncmp(token->str, "&&", 3) == 0
-				|| ft_strncmp(token->str, "||", 3) == 0))
-			return (true);
-	}
-	return (false);
-}
-
 /* TODO needs more tools to ensure there is not any silly stuff like && &&, or && ||
  *		nor that any logical op is without preceding content ("&& cat filein2" should fail) */
 static t_list	*parse_logical_op(t_list *curr_node)
@@ -93,21 +76,17 @@ static t_list	*parse_logical_op(t_list *curr_node)
 	t_token			*token;
 	t_instr_type	instr_type;
 
-	instr_type = INSTR_CMD;
 	if (curr_node)
 	{
 		token = (t_token *)(curr_node->content);
-		if (token->type == OPERATOR)
+		if (token->op_type == OP_LOGIC)
 		{
 			if (ft_strncmp(token->str, "&&", 3) == 0)
 				instr_type = INSTR_AND;
-			else if (ft_strncmp(token->str, "||", 3) == 0)
+			else
 				instr_type = INSTR_OR;
-			if (instr_type != INSTR_CMD)
-			{
-				init_instruction(get_minishell(NULL), instr_type);
-				return (curr_node->next);
-			}
+			init_instruction(get_minishell(NULL), instr_type);
+			return (curr_node->next);
 		}
 		return (curr_node);
 	}
@@ -155,7 +134,7 @@ static t_list	*parse_redir(t_list *curr_node, int cmd_id)
 	while (curr_node)
 	{
 		token = (t_token *)(curr_node->content);
-		if (is_redir_op(token))
+		if (token->op_type == OP_REDIR)
 		{
 			create_redir(token, ((t_token *)curr_node->next->content)->str,
 				get_redir_type(token), cmd_id);

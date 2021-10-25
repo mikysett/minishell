@@ -2,43 +2,6 @@
 
 /* all of this can be worked with enum! */
 
-int		is_pipe_op(t_token *token)
-{
-	return (token->type == OPERATOR && ft_strncmp(token->str, "|", 2) == 0);
-}
-
-int		is_redir_op(t_token *token)
-{
-	char *str;
-
-	if (token->type == OPERATOR)
-	{
-		str = token->str;
-		return (token->type == OPERATOR &&
-			(ft_strncmp(str, "<", 2) == 0 || ft_strncmp(str, ">", 2) == 0
-			|| ft_strncmp(str, "<<", 3) == 0 || ft_strncmp(str, ">>", 3) == 0));
-	}
-	return (0);
-}
-
-int		is_logic_op(t_token *token)
-{
-	char *str;
-
-	str = token->str;
-	return (token->type == OPERATOR &&
-			(ft_strncmp(str, "||", 3) == 0 || ft_strncmp(str, "&&", 3) == 0));
-}
-
-int		is_paren_op(t_token *token)
-{
-	char *str;
-
-	str = token->str;
-	return (token->type == OPERATOR &&
-			(ft_strncmp(str, "(", 1) == 0 || ft_strncmp(str, ")", 1) == 0));
-}
-
 int		get_redir_type(t_token *token)
 {
 	if (ft_strncmp(token->str, "<", 2) == 0)

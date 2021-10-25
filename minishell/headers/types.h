@@ -48,13 +48,18 @@ typedef struct	s_env_var
 typedef enum e_token_type
 {
 	WORD,
-	OPERATOR,
-
-	// TODO next 3 token types are not necessary but I kept them as a good reference
-	control_operator,		/* newline, ‘||’, ‘&&’, ‘&’, ‘;’, ‘;;’, ‘;&’, ‘;;&’, ‘|’, ‘|&’, ‘(’, or ‘)’ */
-	redirection_operator,	/* '<', '>', '<<', '>>',  */
-	metacharacter			/* space, tab, newline, ‘|’, ‘&’, ‘;’, ‘(’, ‘)’, ‘<’, or ‘>’ */
+	OPERATOR
 }				t_token_type;
+
+typedef enum e_operator_type
+{
+	OP_NONE,
+	OP_REDIR,
+	OP_PIPE,
+	OP_PARENS_OPEN,
+	OP_PARENS_CLOSE,
+	OP_LOGIC
+}				t_operator_type;
 
 typedef enum e_quote_type
 {
@@ -74,6 +79,7 @@ typedef enum e_err_code
 typedef struct s_token
 {
 	t_token_type	type;
+	t_operator_type	op_type;
 	char			*str;
 }				t_token;
 
@@ -97,12 +103,18 @@ typedef enum e_redir_type
 	REDIR_OUT_APPEND
 }				t_redir_type;
 
-typedef struct	s_redirect
+typedef struct s_redirect
 {
 	t_redir_type	type;
 	int				cmd_id;
 	char			*file_name;
 }				t_redirect;
+
+typedef struct s_has_redirs
+{
+	bool	in;
+	bool	out;
+}				t_has_redirs;
 
 typedef enum e_inst_type
 {
@@ -127,6 +139,13 @@ typedef struct s_std_io
 	int		curr_in;
 	int		curr_out;
 }				t_std_io;
+
+typedef struct s_grammar_vars {
+	t_list		*curr;
+	t_list		*prev;
+	t_list		*next;
+	int			paren_count;
+}				t_grammar_vars;
 
 typedef struct s_minishell
 {
