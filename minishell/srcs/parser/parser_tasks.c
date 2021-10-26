@@ -74,6 +74,8 @@ t_list	*parse_pipe(t_list *curr_node, int cmd_id)
 	return (curr_node->next);
 }
 
+/* the function checks for consecutive redirections */
+/* argument next_node is useless now and can be removed */
 t_list	*parse_redir(t_list *curr_node, int cmd_id)
 {
 	t_token		*token;

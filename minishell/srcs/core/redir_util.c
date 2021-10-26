@@ -1,12 +1,5 @@
 #include "minishell.h"
 
-bool	is_redir_in(t_redir_type type)
-{
-	if (type == REDIR_HERE_DOC || type == REDIR_IN)
-		return (true);
-	return (false);
-}
-
 int	ft_set_dup(int old_fd)
 {
 	int	new_fd;

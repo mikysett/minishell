@@ -13,6 +13,9 @@ t_minishell	*parser(char *line, t_minishell *minishell)
 			return (minishell);
 		perform_expansions(minishell->tokens);
 		parse_tokens(*minishell->tokens, 0, 0);
+		DEBUG(print_tokens(minishell->tokens);)
+		DEBUG(print_instructions(minishell->instructions);)
+		DEBUG(print_redirections(minishell->redirect);)
 	}
 	return (minishell);
 }
@@ -22,14 +25,20 @@ void	parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	t_token			*curr_token;
 
 	if (!curr_node)
-		return ;
+		return;
 	curr_token = get_token(curr_node);
 	if (curr_token->op_type == OP_LOGIC)
 		parse_tokens(parse_logical_op(curr_node), cmd_id, cmd_group);
 	else if (curr_token->op_type == OP_PARENS_OPEN)
+	{
+		init_instruction(get_minishell(NULL), INSTR_GRP_START);
 		parse_tokens(curr_node->next, cmd_id, cmd_group + 1);
+	}
 	else if (curr_token->op_type == OP_PARENS_CLOSE)
+	{
+		init_instruction(get_minishell(NULL), INSTR_GRP_END);
 		parse_tokens(curr_node->next, cmd_id, cmd_group - 1);
+	}
 	else if (curr_token->op_type == OP_PIPE)
 		parse_tokens(parse_pipe(curr_node, cmd_id - 1), cmd_id, cmd_group);
 	else

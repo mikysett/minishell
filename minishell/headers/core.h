@@ -26,7 +26,6 @@ void		del_env_var(void *env_var_void);
 void		free_env_and_paths(t_minishell *ms);
 
 // REDIR_UTIL
-bool	is_redir_in(t_redir_type type);
 int		ft_set_dup(int old_fd);
 bool	ft_set_dup2(int dup_from_fd, int dup_to_fd);
 bool	ft_init_pipe_fd(int pipe_fd[2]);
