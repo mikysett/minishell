@@ -21,7 +21,7 @@ t_list	*executor(t_minishell *ms, t_list *curr)
 	{
 		while (curr && instr->type == INSTR_CMD)
 		{
-			get_minishell(NULL)->exit_code = exec_instr(instr->cmd,
+			ms->exit_code = exec_instr(instr->cmd,
 				&ms->streams, ms->redirect);
 			curr = curr->next;
 			if (curr)

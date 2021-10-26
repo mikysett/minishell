@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: msessa <mikysett@gmail.com>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 14:12:08 by apinto            #+#    #+#             */
-/*   Updated: 2021/10/26 14:12:20 by apinto           ###   ########.fr       */
+/*   Updated: 2021/10/26 15:37:33 by msessa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	t_token			*curr_token;
 
 	if (!curr_node)
-		return;
+		return ;
 	curr_token = get_token(curr_node);
 	if (curr_token->op_type == OP_LOGIC)
 		parse_tokens(parse_logical_op(curr_node), cmd_id, cmd_group);
