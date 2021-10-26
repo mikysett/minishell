@@ -1,6 +1,8 @@
 #include "minishell.h"
 
 static t_list	*next_group_pos(t_list *curr);
+static t_list	*process_logic_op(t_minishell *ms, t_list *curr,
+	t_instruction *instr);
 static int		exec_instr(t_cmd *cmd, t_std_io *std_io, t_list **redirect);
 static int		exec_cmd(t_cmd *cmd);
 
@@ -13,20 +15,8 @@ t_list	*executor(t_minishell *ms, t_list *curr)
 	instr = (t_instruction *)curr->content;
 	if (instr->type == INSTR_GRP_START || instr->type == INSTR_GRP_END)
 		return (executor(ms, curr->next));
-	else if (instr->type == INSTR_OR)
-	{
-		if (ms->exit_code == EXIT_SUCCESS)
-			return (executor(ms, next_group_pos(curr)));
-		else
-			return (executor(ms, curr->next));
-	}
-	else if (instr->type == INSTR_AND)
-	{
-		if (ms->exit_code != EXIT_SUCCESS)
-			return (executor(ms, next_group_pos(curr)));
-		else
-			return (executor(ms, curr->next));
-	}
+	else if (instr->type == INSTR_OR || instr->type == INSTR_AND)
+		return (process_logic_op(ms, curr, instr));
 	else
 	{
 		while (curr && instr->type == INSTR_CMD)
@@ -39,6 +29,17 @@ t_list	*executor(t_minishell *ms, t_list *curr)
 		}
 		return (executor(ms, curr));
 	}
+}
+
+static t_list	*process_logic_op(t_minishell *ms, t_list *curr,
+	t_instruction *instr)
+{
+	if (instr->type == INSTR_OR && ms->exit_code == EXIT_SUCCESS)
+		return (executor(ms, next_group_pos(curr)));
+	else if (instr->type == INSTR_AND && ms->exit_code != EXIT_SUCCESS)
+		return (executor(ms, next_group_pos(curr)));
+	else
+		return (executor(ms, curr->next));
 }
 
 static t_list	*next_group_pos(t_list *curr)
