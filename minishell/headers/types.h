@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   types.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: msessa <mikysett@gmail.com>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 14:13:20 by apinto            #+#    #+#             */
-/*   Updated: 2021/10/26 14:15:01 by apinto           ###   ########.fr       */
+/*   Updated: 2021/10/26 14:55:37 by msessa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 
 # define MAX_PROMPT_SIZE		80
 
+# define EXIT_EXIT_ERROR		255
 # define EXIT_PARSER_ERROR		258
 # define EXIT_INCORRECT_USAGE	2
 # define EXIT_FILE_NOT_EXEC		126
