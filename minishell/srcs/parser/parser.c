@@ -47,9 +47,15 @@ static void	parse_tokens(t_list *curr_node, int cmd_id, int cmd_group)
 	if (curr_token->op_type == OP_LOGIC)
 		parse_tokens(parse_logical_op(curr_node), cmd_id, cmd_group);
 	else if (curr_token->op_type == OP_PARENS_OPEN)
+	{
+		init_instruction(get_minishell(NULL), INSTR_GRP_START);
 		parse_tokens(curr_node->next, cmd_id, cmd_group + 1);
+	}
 	else if (curr_token->op_type == OP_PARENS_CLOSE)
+	{
+		init_instruction(get_minishell(NULL), INSTR_GRP_END);
 		parse_tokens(curr_node->next, cmd_id, cmd_group - 1);
+	}
 	else if (curr_token->op_type == OP_PIPE)
 		parse_tokens(parse_pipe(curr_node, cmd_id - 1), cmd_id, cmd_group);
 	else

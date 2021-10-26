@@ -130,7 +130,7 @@ void	create_fake_cmd0(t_minishell *ms)
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
-	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+	executor(ms, *ms->instructions);
 }
 
 // <filein1 cat | wc -l
@@ -176,7 +176,7 @@ void	create_fake_cmd1(t_minishell *ms)
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
-	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+	executor(ms, *ms->instructions);
 }
 
 // <filein1 wc -l >out2
@@ -218,7 +218,7 @@ void	create_fake_cmd2(t_minishell *ms)
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
-	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+	executor(ms, *ms->instructions);
 }
 
 // <filein1 cat | wc -l >out2
@@ -281,7 +281,7 @@ void	create_fake_cmd3(t_minishell *ms)
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
-	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+	executor(ms, *ms->instructions);
 }
 
 
@@ -367,7 +367,7 @@ void	create_fake_cmd4(t_minishell *ms)
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
-	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+	executor(ms, *ms->instructions);
 }
 
 // <<EOF wc -l
@@ -403,7 +403,7 @@ void	create_fake_cmd5(t_minishell *ms)
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
-	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+	executor(ms, *ms->instructions);
 }
 
 // echo this is a test
@@ -447,5 +447,5 @@ void	create_fake_cmd6(t_minishell *ms)
 
 	print_instructions(ms->instructions);
 	print_redirections(ms->redirect);
-	ms->exit_code = executor(ms, *ms->instructions, EXIT_SUCCESS);
+	executor(ms, *ms->instructions);
 }

@@ -3,7 +3,7 @@
 
 
 // EXECUTOR
-int		executor(t_minishell *ms, t_list *curr, int cmd_exit_code);
+t_list	*executor(t_minishell *ms, t_list *curr);
 
 // EXEC_STD_CMD
 int		exec_std_cmd(t_cmd *cmd);

@@ -123,7 +123,9 @@ typedef enum e_inst_type
 {
 	INSTR_CMD,
 	INSTR_OR,
-	INSTR_AND
+	INSTR_AND,
+	INSTR_GRP_START,
+	INSTR_GRP_END
 }				t_instr_type;
 
 typedef struct s_instruction

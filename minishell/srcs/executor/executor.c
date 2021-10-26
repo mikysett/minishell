@@ -1,30 +1,51 @@
 #include "minishell.h"
 
-static int	exec_instr(t_cmd *cmd, t_std_io *std_io, t_list **redirect);
-static int	exec_cmd(t_cmd *cmd);
+static t_list	*next_group_pos(t_list *curr);
+static int		exec_instr(t_cmd *cmd, t_std_io *std_io, t_list **redirect);
+static int		exec_cmd(t_cmd *cmd);
 
-int	executor(t_minishell *ms, t_list *curr, int cmd_exit_code)
+t_list	*executor(t_minishell *ms, t_list *curr)
 {
 	t_instruction	*instr;
-	int				curr_group;
 
-	if (curr)
-		curr_group = ((t_instruction *)curr->content)->cmd->group;
-	while (curr)
+	if (!curr)
+		return (NULL);
+	instr = (t_instruction *)curr->content;
+	if (instr->type == INSTR_GRP_START || instr->type == INSTR_GRP_END)
+		return (executor(ms, curr->next));
+	else if (instr->type == INSTR_OR)
 	{
-		instr = (t_instruction *)curr->content;
-		if (instr->type == INSTR_CMD && instr->cmd->group != curr_group)
-			return (executor(ms, curr, cmd_exit_code));
-		else if (instr->type == INSTR_CMD)
-			cmd_exit_code = exec_instr(instr->cmd, &ms->streams, ms->redirect);
-		else if ((instr->type == INSTR_OR && cmd_exit_code == EXIT_SUCCESS)
-			|| (instr->type == INSTR_AND && cmd_exit_code != EXIT_SUCCESS))
-			return (cmd_exit_code);
-		curr = curr->next;
-		// if (prog_state(TAKE_STATE) != PROG_OK)
-			// break ;
+		if (ms->exit_code == EXIT_SUCCESS)
+			return (executor(ms, next_group_pos(curr)));
+		else
+			return (executor(ms, curr->next));
 	}
-	return (cmd_exit_code);
+	else if (instr->type == INSTR_AND)
+	{
+		if (ms->exit_code != EXIT_SUCCESS)
+			return (executor(ms, next_group_pos(curr)));
+		else
+			return (executor(ms, curr->next));
+	}
+	else
+	{
+		while (curr && instr->type == INSTR_CMD)
+		{
+			get_minishell(NULL)->exit_code = exec_instr(instr->cmd,
+				&ms->streams, ms->redirect);
+			curr = curr->next;
+			if (curr)
+				instr = (t_instruction *)curr->content;
+		}
+		return (executor(ms, curr));
+	}
+}
+
+static t_list	*next_group_pos(t_list *curr)
+{
+	while (curr && ((t_instruction *)curr->content)->type != INSTR_GRP_END)
+		curr = curr->next;
+	return (curr);
 }
 
 static int	exec_instr(t_cmd *cmd, t_std_io *std_io, t_list **redirect)

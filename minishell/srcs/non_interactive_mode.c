@@ -34,7 +34,7 @@ void	process_line(t_minishell *ms, char *line)
 		ms = parser(line, ms);
 		if (prog_state(TAKE_STATE) == PROG_OK)
 		{
-			ms->exit_code = executor(ms, *ms->instructions, ms->exit_code);
+			executor(ms, *ms->instructions);
 			restore_std_io(false, false);
 		}
 		else
