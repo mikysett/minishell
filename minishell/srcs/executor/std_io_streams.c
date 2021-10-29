@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   std_io_streams.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:07 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:18 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	save_std_in(t_minishell *ms)
@@ -5,12 +17,6 @@ void	save_std_in(t_minishell *ms)
 	if (ms->streams.stdin_saved == false)
 	{
 		ms->streams.stdin_fd = ft_set_dup(STDIN_FILENO);
-		DEBUG(fprintf(stderr, "%s< SAVE stdin, fd: %d%s\n",
-			CLR_BLUE, ms->streams.stdin_fd, CLR_WHITE);)
-		if (ms->streams.stdin_fd == -1)
-		{
-			DEBUG(fprintf(stderr, "save std err\n");)
-		}
 		ms->streams.stdin_saved = true;
 	}
 }

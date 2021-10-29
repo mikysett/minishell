@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parameter_expansion_util.c                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:08 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:20 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*expand_exit_code(char *start_name, t_token *token);
 static char	*expand_std_parameter(char *start_name, const char *par_name,
-	t_token *token);
+				t_token *token);
 
 void	expand_parameter(char *start_name, int size_name, t_token *token)
 {
@@ -42,8 +54,8 @@ static char	*expand_std_parameter(char *start_name, const char *par_name,
 
 	if (par_value == NULL)
 	{
-		new_str = calloc_or_exit(1, ft_strlen(token->str)
-			- par_name_len + 1);
+		new_str = calloc_or_exit(1,
+				ft_strlen(token->str) - par_name_len + 1);
 		ft_strlcat(new_str, token->str, start_name - token->str + 1);
 		ft_strlcat(new_str, start_name + par_name_len,
 			ft_strlen(new_str) + ft_strlen(start_name + par_name_len) + 1);
@@ -51,7 +63,7 @@ static char	*expand_std_parameter(char *start_name, const char *par_name,
 	else
 	{
 		new_str = calloc_or_exit(1, ft_strlen(token->str)
-			+ ft_strlen(par_value) - par_name_len + 1);
+				+ ft_strlen(par_value) - par_name_len + 1);
 		ft_strlcat(new_str, token->str, start_name - token->str + 1);
 		ft_strlcat(new_str, par_value,
 			ft_strlen(new_str) + ft_strlen(par_value) + 1);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   types.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msessa <mikysett@gmail.com>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:13:20 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:55:37 by msessa           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TYPES_H
 # define TYPES_H
 
@@ -15,6 +27,7 @@
 
 # define MAX_PROMPT_SIZE		80
 
+# define EXIT_EXIT_ERROR		255
 # define EXIT_PARSER_ERROR		258
 # define EXIT_INCORRECT_USAGE	2
 # define EXIT_FILE_NOT_EXEC		126
@@ -41,7 +54,7 @@ typedef enum e_prog_state
 	PARSER_ERROR
 }				t_prog_state;
 
-typedef struct	s_env_var
+typedef struct s_env_var
 {
 	char	*key;
 	char	*value;
@@ -77,7 +90,6 @@ typedef enum e_err_code
 	MEMORY_FAIL,
 	WRONG_QUOTING
 }				t_err_code;
-
 
 typedef struct s_token
 {
@@ -154,20 +166,20 @@ typedef struct s_grammar_vars {
 
 typedef struct s_minishell
 {
-	char	*prog_name;
-	char	*prompt; // TODO maybe improve it to more robust extend
+	char		*prog_name;
+	char		*prompt;
 
-	t_list	**instructions;
-	t_list	**redirect;
-	t_list	**tokens;
+	t_list		**instructions;
+	t_list		**redirect;
+	t_list		**tokens;
 
 	t_std_io	streams;
 
-	char	**envp;
-	t_list	**env_vars;
-	char	**paths;
+	char		**envp;
+	t_list		**env_vars;
+	char		**paths;
 
-	int		exit_code;
+	int			exit_code;
 }				t_minishell;
 
 #endif

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   memory_util.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:07 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:16 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_minishell	*init_minishell(char **envp)
@@ -42,7 +54,7 @@ char	**ft_set_paths(char **envp)
 void	*calloc_or_exit(size_t count, size_t size)
 {
 	void	*result;
-	
+
 	result = ft_calloc(count, size);
 	if (!result)
 		ft_error_exit(MEMORY_FAIL);

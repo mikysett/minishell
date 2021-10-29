@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_std_cmd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:07 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:17 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	exec_child(t_minishell *ms, t_cmd *cmd);
@@ -41,7 +53,7 @@ static int	exec_child(t_minishell *ms, t_cmd *cmd)
 			exit(EXIT_FILE_NOT_EXEC);
 		}
 	}
-	return (EXIT_FILE_NOT_EXEC); // This line is useless, exists only to please compiler warnings
+	return (EXIT_FILE_NOT_EXEC);
 }
 
 static int	exec_parent(pid_t child_pid)
@@ -57,7 +69,6 @@ static int	exec_parent(pid_t child_pid)
 		return (WEXITSTATUS(cmd_exit_status));
 	else if (WIFSIGNALED(cmd_exit_status))
 		return (128 + WTERMSIG(cmd_exit_status));
-	// TODO this last exit code is not doublecheckded
 	else
 		return (EXIT_FAILURE);
 }

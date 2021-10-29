@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo_builtin.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:07 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:15 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static bool	get_print_newline(int argc, char **argv);
@@ -30,6 +42,6 @@ int	echo_builtin(char **argv)
 static bool	get_print_newline(int argc, char **argv)
 {
 	if (argc >= 2 && !ft_strncmp("-n", argv[1], 3))
-			return (false);
+		return (false);
 	return (true);
 }

@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validate_grammar.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:08 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:21 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <minishell.h>
 
 static void	advance_node(t_grammar_vars *grammar);
-static void	initializes_grammar_vars(t_grammar_vars *grammar, t_list *curr_node);
+static void	initializes_grammar_vars(t_grammar_vars *grammar,
+				t_list *curr_node);
 static bool	check_token(t_grammar_vars *grammar);
-static void print_faulty_token(t_grammar_vars *grammar);
+static void	print_faulty_token(t_grammar_vars *grammar);
 
 void	validate_grammar(t_list *curr_node)
 {
@@ -23,9 +36,9 @@ void	validate_grammar(t_list *curr_node)
 	}
 }
 
-static void print_faulty_token(t_grammar_vars *grammar)
+static void	print_faulty_token(t_grammar_vars *grammar)
 {
-	char *token;
+	char	*token;
 
 	token = ((t_token *)grammar->curr->content)->str;
 	write(1, &ERROR_MESSAGE, ft_strlen(ERROR_MESSAGE));
@@ -58,9 +71,9 @@ static bool	check_token(t_grammar_vars *grammar)
 {
 	if (get_token(grammar->curr)->op_type == OP_REDIR
 		&& (!grammar->next || (get_token(grammar->next)->type != WORD)))
-			return (false);
+		return (false);
 	else if (get_token(grammar->curr)->op_type == OP_LOGIC
-			|| get_token(grammar->curr)->op_type == OP_PIPE)
+		|| get_token(grammar->curr)->op_type == OP_PIPE)
 	{
 		if (!grammar->prev || !grammar->next
 			|| (get_token(grammar->prev)->type != WORD

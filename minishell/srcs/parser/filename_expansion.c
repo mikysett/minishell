@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   filename_expansion.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:08 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:19 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static bool		has_filename_expansion(char *str);
@@ -40,7 +52,7 @@ static t_list	*insert_new_tokens(t_list **tokens, t_list *prev, t_list *curr)
 {
 	t_list	**new_tokens;
 	t_list	*new_curr;
-	
+
 	new_curr = curr;
 	new_tokens = calloc_or_exit(1, sizeof(t_list *));
 	new_tokens = expand_filenames(new_tokens, ((t_token *)curr->content)->str);
@@ -71,7 +83,7 @@ static t_list	**expand_filenames(t_list **new_tokens, char *str)
 	curr_dir = open_current_dir(curr_dir_str);
 	if (curr_dir_str)
 		free((void *)curr_dir_str);
-	errno = 0;		// Necessary to check readdir error result
+	errno = 0;
 	curr_dir_entry = readdir(curr_dir);
 	while (curr_dir_entry)
 	{

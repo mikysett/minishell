@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parameter_expansion.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apinto <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/26 14:12:08 by apinto            #+#    #+#             */
+/*   Updated: 2021/10/26 14:12:20 by apinto           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*par_name_start(char *str);
 static int	get_len_par_name(char *par_start);
 
-void			parameter_expansion(t_list **tokens)
+void	parameter_expansion(t_list **tokens)
 {
 	t_list	*curr;
 	char	*start_par_name;
@@ -32,12 +44,14 @@ static char	*par_name_start(char *str)
 	while (*str)
 	{
 		if (!update_quote_type(get_quote_type(*str), &prev_qt_type))
+		{
 			if (prev_qt_type != SINGLE_QUOTES && *str == '$')
 			{
 				next_c = *(str + 1);
 				if (ft_isalpha(next_c) || next_c == '?' || next_c == '_')
 					return (str);
 			}
+		}
 		str++;
 	}
 	return (NULL);
