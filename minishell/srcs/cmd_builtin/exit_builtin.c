@@ -17,20 +17,19 @@ static bool	is_number(char *str_nb);
 int	exit_builtin(char **argv)
 {
 	const int	args_nb = args_count(argv);
-	t_minishell	*ms;
+	int			exit_code;
 
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
-	ms = get_minishell(NULL);
 	if (args_nb > 1)
 	{
 		if (!is_number(argv[1]))
 		{
 			ft_putstr_fd("exit: numeric argument required\n", STDERR_FILENO);
-			ms->exit_code = EXIT_EXIT_ERROR;
+			exit_code = EXIT_EXIT_ERROR;
 		}
 		else
 		{
-			ms->exit_code = ft_atoi(argv[1]) % 256;
+			exit_code = ft_atoi(argv[1]) % 256;
 			if (args_nb > 2)
 			{
 				ft_putstr_fd("exit: too many arguments\n", STDERR_FILENO);
@@ -38,8 +37,8 @@ int	exit_builtin(char **argv)
 			}
 		}
 	}
-	free_minishell((t_minishell *)ms);
-	exit(ms->exit_code);
+	free_minishell(get_minishell(NULL));
+	exit(exit_code);
 }
 
 static bool	is_number(char *str_nb)

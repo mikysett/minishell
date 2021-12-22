@@ -81,7 +81,7 @@ DEPS	=	$(shell find $(HEADERS) -name *.h)
 
 CC		=	gcc
 
-CFLAGS	=	-Wall -Wextra 
+CFLAGS	=	-Wall -Wextra -Werror
 INCLUDES	= -I $(HEADERS) -I $(LIBFT)
 
 LIBS	=	-L./$(LIBFT) -lft -lreadline
@@ -121,7 +121,7 @@ fclean:		miniclean
 re:			fclean all
 
 debug:		INCLUDES += -DDEBUG_MODE
-debug:		CFLAGS += -g -fsanitize=address
+debug:		CFLAGS = -Wall -Wextra -g -fsanitize=address
 debug:		miniclean
 debug:		all
 
