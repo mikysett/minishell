@@ -61,7 +61,8 @@ BASIC_SRCS	:=	srcs/cmd_builtin/cd_builtin.c \
 				srcs/parser/quote_removal.c \
 				srcs/parser/quote_util.c \
 				srcs/parser/tokens.c \
-				srcs/parser/validate_grammar.c
+				srcs/parser/validate_grammar.c \
+				srcs/debug.c
 
 SRCS		:= $(BASIC_SRCS)
 
