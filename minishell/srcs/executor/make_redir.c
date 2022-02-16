@@ -44,7 +44,8 @@ static bool	set_here_doc(t_std_io *std_io, char *limiter)
 	if (ft_init_pipe_fd(here_doc_pipe) == false)
 		return (false);
 	line = readline("> ");
-	while (ft_strncmp(limiter, line, limiter_len))
+	while (line
+		&& ft_strncmp(limiter, line, limiter_len))
 	{
 		write(here_doc_pipe[PIPE_WRITE], line, ft_strlen(line));
 		write(here_doc_pipe[PIPE_WRITE], "\n", 1);

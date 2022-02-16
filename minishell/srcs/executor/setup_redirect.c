@@ -27,8 +27,12 @@ bool	setup_redirect(t_std_io *std_io, t_list **redirect, int id)
 	has_redirs.out = false;
 	if (!setup_heredoc_redir(std_io, *redirect, id, &has_redirs))
 		return (false);
-	if (!setup_pipe_redir(std_io, *redirect, id, &has_redirs))
-		return (false);
+	// To give priority to heredoc in case it's used with a pipe
+	if (has_redirs.in == false)
+	{
+		if (!setup_pipe_redir(std_io, *redirect, id, &has_redirs))
+			return (false);
+	}
 	if (!setup_other_redir(std_io, *redirect, id, &has_redirs))
 		return (false);
 	restore_std_io(has_redirs.out, has_redirs.in);
@@ -46,6 +50,7 @@ static bool	setup_heredoc_redir(t_std_io *std_io, t_list *curr, int id,
 		if (curr_redir->cmd_id == id
 			&& curr_redir->type == REDIR_HERE_DOC)
 		{
+			restore_std_io(has_redirs->out, has_redirs->in);
 			has_redirs->in = true;
 			if (!make_redir(std_io, curr_redir))
 				return (false);
