@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msessa <mikysett@gmail.com>                +#+  +:+       +#+        */
+/*   By: msessa <msessa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 14:12:07 by apinto            #+#    #+#             */
-/*   Updated: 2021/10/26 15:05:32 by msessa           ###   ########.fr       */
+/*   Updated: 2022/02/17 13:38:14 by msessa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ int	exit_builtin(char **argv)
 			}
 		}
 	}
+	else
+		exit_code = 0;
 	free_minishell(get_minishell(NULL));
 	exit(exit_code);
 }
